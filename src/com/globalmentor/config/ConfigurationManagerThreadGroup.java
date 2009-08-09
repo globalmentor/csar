@@ -20,7 +20,7 @@ package com.globalmentor.config;
 @author Garret Wilson
 @see Configurator
 */
-public class MutableConfiguratorThreadGroup extends ConfiguratorThreadGroup implements ConfigurationManager
+public class ConfigurationManagerThreadGroup extends ConfigurationManagedThreadGroup implements ConfigurationManager
 {
 
 	/**Thread group name constructor.
@@ -32,7 +32,7 @@ public class MutableConfiguratorThreadGroup extends ConfiguratorThreadGroup impl
 	@see ThreadGroup#checkAccess()
 	@see #setConfiguration(Configuration)
 	*/
-	public MutableConfiguratorThreadGroup(final String name, final Configuration... configurations)
+	public ConfigurationManagerThreadGroup(final String name, final Configuration... configurations)
 	{
 		this(Thread.currentThread().getThreadGroup(), name, configurations);
 	}
@@ -47,7 +47,7 @@ public class MutableConfiguratorThreadGroup extends ConfiguratorThreadGroup impl
 	@see ThreadGroup#checkAccess()
 	@see #setConfiguration(Configuration)
 	*/
-	public MutableConfiguratorThreadGroup(final ThreadGroup parent, final String name, final Configuration... configurations)
+	public ConfigurationManagerThreadGroup(final ThreadGroup parent, final String name, final Configuration... configurations)
 	{
 		super(parent, name, configurations);
 	}

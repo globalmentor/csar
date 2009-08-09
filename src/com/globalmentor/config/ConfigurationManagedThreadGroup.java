@@ -22,7 +22,7 @@ import static com.globalmentor.java.Objects.*;
 @author Garret Wilson
 @see Configurator
 */
-public class ConfiguratorThreadGroup extends ThreadGroup
+public class ConfigurationManagedThreadGroup extends ThreadGroup implements ConfigurationManaged
 {
 
 	/**The implementation for managing configurations for this thread group.*/
@@ -38,7 +38,7 @@ public class ConfiguratorThreadGroup extends ThreadGroup
 	@see ThreadGroup#checkAccess()
 	@see #setConfiguration(Configuration)
 	*/
-	public ConfiguratorThreadGroup(final String name, final Configuration... configurations)
+	public ConfigurationManagedThreadGroup(final String name, final Configuration... configurations)
 	{
 		this(Thread.currentThread().getThreadGroup(), name, configurations);
 	}
@@ -54,7 +54,7 @@ public class ConfiguratorThreadGroup extends ThreadGroup
 	@see ThreadGroup#checkAccess()
 	@see #setConfiguration(Configuration)
 	*/
-	public ConfiguratorThreadGroup(final ThreadGroup parent, final String name, final Configuration... configurations)
+	public ConfigurationManagedThreadGroup(final ThreadGroup parent, final String name, final Configuration... configurations)
 	{
 		this(parent, name, new DefaultConfigurationManager(), configurations);
 	}
@@ -70,7 +70,7 @@ public class ConfiguratorThreadGroup extends ThreadGroup
 	@see ThreadGroup#checkAccess()
 	@see #setConfiguration(Configuration)
 	*/
-	public ConfiguratorThreadGroup(final String name, final ConfigurationManager configurationManager, final Configuration... configurations)
+	public ConfigurationManagedThreadGroup(final String name, final ConfigurationManager configurationManager, final Configuration... configurations)
 	{
 		this(Thread.currentThread().getThreadGroup(), name, configurationManager, configurations);
 	}
@@ -86,7 +86,7 @@ public class ConfiguratorThreadGroup extends ThreadGroup
 	@see ThreadGroup#checkAccess()
 	@see #setConfiguration(Configuration)
 	*/
-	public ConfiguratorThreadGroup(final ThreadGroup parent, final String name, final ConfigurationManager configurationManager, final Configuration... configurations)
+	public ConfigurationManagedThreadGroup(final ThreadGroup parent, final String name, final ConfigurationManager configurationManager, final Configuration... configurations)
 	{
 		super(parent, name);
 		this.configurationManager=checkInstance(configurationManager, "Configuration manager cannot be null.");

@@ -20,7 +20,7 @@ package com.globalmentor.config;
 @author Garret Wilson
 @see Configurator
 */
-public interface ConfigurationManager
+public interface ConfigurationManager extends ConfigurationManaged
 {
 
 	/**Sets the given configurations, associating them with their respective classes.
@@ -43,13 +43,6 @@ public interface ConfigurationManager
 	@return The configuration previously associated with the given class, or <code>null</code> if there was no previous configuration for that class.
 	*/
 	public <C extends Configuration> C setConfiguration(final Class<C> configurationClass, final C configuration);
-
-	/**Returns the configuration for the given configuration type.
-	@param <C> The type of configuration to retrieve.
-	@param configurationClass The class of configuration to retrieve.
-	@return The configuration associated with the given class, or <code>null</code> if there was no configuration for that class.
-	 */
-	public <C extends Configuration> C getConfiguration(final Class<C> configurationClass);
 
 	/**Removes a configuration of the given type.
 	If no configuration is associated with the specified type, no action occurs.
