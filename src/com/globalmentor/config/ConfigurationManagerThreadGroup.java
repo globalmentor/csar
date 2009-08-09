@@ -23,8 +23,12 @@ package com.globalmentor.config;
 public class ConfigurationManagerThreadGroup extends ConfigurationManagedThreadGroup implements ConfigurationManager
 {
 
+	/**@return The implementation for managing configurations for this thread group.*/
+	protected ConfigurationManager getConfigurationManager() {return (ConfigurationManager)getConfigurationManaged();}
+
 	/**Thread group name constructor.
 	Creates a thread group using the current thread as the parent.
+	The default configuration manager is used.
 	@param name The name of the new thread group.
 	@param configurations The available configurations to set.
 	@throws SecurityException If the current thread cannot create a thread in the specified thread group.
@@ -38,6 +42,7 @@ public class ConfigurationManagerThreadGroup extends ConfigurationManagedThreadG
 	}
 
 	/**Thread group parent and thread group name constructor. 
+	The default configuration manager is used.
 	@param parent The parent thread group.
 	@param name The name of the new thread group.
 	@param configurations The available configurations to set.
@@ -49,56 +54,80 @@ public class ConfigurationManagerThreadGroup extends ConfigurationManagedThreadG
 	*/
 	public ConfigurationManagerThreadGroup(final ThreadGroup parent, final String name, final Configuration... configurations)
 	{
-		super(parent, name, configurations);
+		this(parent, name, new DefaultConfigurationManager(), configurations);
+	}
+
+	/**Thread group name constructor.
+	Creates a thread group using the current thread as the parent.
+	@param name The name of the new thread group.
+	@param configurationManager The implementation for managing configurations for this thread group.
+	@param configurations The available configurations to set.
+	@throws NullPointerException if the given configuration manager is <code>null</code>. 
+	@throws SecurityException If the current thread cannot create a thread in the specified thread group.
+	@see SecurityException
+	@see ThreadGroup#checkAccess()
+	@see #setConfiguration(Configuration)
+	*/
+	public ConfigurationManagerThreadGroup(final String name, final ConfigurationManager configurationManager, final Configuration... configurations)
+	{
+		this(Thread.currentThread().getThreadGroup(), name, configurationManager, configurations);
+	}
+
+	/**Thread group parent and thread group name constructor. 
+	@param parent The parent thread group.
+	@param name The name of the new thread group.
+	@param configurationManager The implementation for managing configurations for this thread group.
+	@param configurations The available configurations to set.
+	@throws NullPointerException if the given parent and/or configuration manager is <code>null</code>. 
+	@throws SecurityException If the current thread cannot create a thread in the specified thread group.
+	@see SecurityException
+	@see ThreadGroup#checkAccess()
+	@see #setConfiguration(Configuration)
+	*/
+	public ConfigurationManagerThreadGroup(final ThreadGroup parent, final String name, final ConfigurationManager configurationManager, final Configuration... configurations)
+	{
+		super(parent, name, configurationManager);
+		setConfigurations(configurations);
 	}
 
 	/**Sets the given configurations, associating them with their respective classes.
-	This version is overridden solely to provide public access to the method.
 	@param configurations The configurations to set.
 	*/
-	@Override
-	public final void setConfigurations(final Configuration... configurations)
+	public void setConfigurations(final Configuration... configurations)
 	{
-		super.setConfigurations(configurations);
+		getConfigurationManager().setConfigurations(configurations);
 	}
 
 	/**Sets the given configuration, associating it with its class.
-	This version is overridden solely to provide public access to the method.
 	@param <C> The type of configuration being set.
 	@param configuration The configuration to set.
 	@return The configuration previously associated with the same class, or <code>null</code> if there was no previous configuration for that class.
 	@throws NullPointerException if the given configuration is <code>null</code>.
 	*/
-	@Override
-	@SuppressWarnings("unchecked")
-	public final <C extends Configuration> C setConfiguration(final C configuration)
+	public <C extends Configuration> C setConfiguration(final C configuration)
 	{
-		return setConfiguration((Class<C>)configuration.getClass(), configuration);
+		return getConfigurationManager().setConfiguration(configuration);
 	}
 
 	/**Sets the given configuration.
-	This version is overridden solely to provide public access to the method.
 	@param <C> The type of configuration being set.
 	@param configurationClass The class with which to associate the configuration.
 	@param configuration The configuration to set.
 	@return The configuration previously associated with the given class, or <code>null</code> if there was no previous configuration for that class.
 	*/
-	@Override
 	public <C extends Configuration> C setConfiguration(final Class<C> configurationClass, final C configuration)
 	{
-		return super.setConfiguration(configurationClass, configuration);
+		return getConfigurationManager().setConfiguration(configurationClass, configuration);
 	}
 
 	/**Removes a configuration of the given type.
-	This version is overridden solely to provide public access to the method.
 	If no configuration is associated with the specified type, no action occurs.
 	@param <C> The type of configuration being removed.
 	@param configurationClass The class with which the configuration is associated.
 	@return The configuration previously associated with the given class, or <code>null</code> if there was no previous configuration for that class.
 	*/
-	@Override
 	public <C extends Configuration> C removeConfiguration(final Class<C> configurationClass)
 	{
-		return super.removeConfiguration(configurationClass);
+		return getConfigurationManager().removeConfiguration(configurationClass);
 	}
 }

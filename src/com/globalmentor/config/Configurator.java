@@ -24,12 +24,13 @@ can be associated with some thread group, which allows local configurations to b
 can also be set, which which serves as a fallback for that configuration type when no thread group-specific
 configuration is defined. No fallback need be implemented if a thread group-specific configuration is always
 provided to requesting threads.</p>
-<p>A configuration can be made local by registering it with a {@link ConfigurationManagedThreadGroup}
-and creating a {@link Thread} using one of the thread's constructors that specify a {@link ThreadGroup}.
+<p>A configuration can be made local by registering it with a thread group that is {@link ConfigurationManaged},
+such as {@link ConfigurationManagerThreadGroup}, and creating a {@link Thread} using one of the thread's
+constructors that specify a {@link ThreadGroup}.
 All threads that run in the thread group will have access to the configuration by calling
 {@link Configurator#getConfiguration(Class)}, specifying the class of the {@link Configuration} implementation.
-The configuration registered with the {@link ConfigurationManagedThreadGroup} will be returned. A configuration can thus
-be restricted to specific areas of the program.</p>
+The configuration registered with the {@link ConfigurationManaged} thread group will be returned. A configuration
+can thus be restricted to specific areas of the program.</p>
 <p>If no thread group is found that implements the configuration type, a global default configuration
 is searched for by using {@link Configurator#getDefaultConfiguration(Class)}. If no local or global configuration
 of the requested type is found, a {@link ConfigurationException} is thrown.</p>
@@ -98,8 +99,8 @@ public class Configurator
 	}
 
 	/**Retrieves the configuration of the given type for the given thread.
-	<p>A local configuration is first searched for using the {@link ConfigurationManagedThreadGroup},
-	if any, of the current thread. If no {@link ConfigurationManagedThreadGroup} is found for the thread,
+	<p>A local configuration is first searched for using the first {@link ConfigurationManaged} thread group,
+	if any, of the current thread. If no {@link ConfigurationManaged} thread group is found for the thread,
 	or no such configuration is set for the thread group, a default configuration is searched for
 	using {@link #getDefaultConfiguration(Class)}. If no appropriate configuration can be found,
 	A {@link ConfigurationException} is thrown.</p>
@@ -107,7 +108,7 @@ public class Configurator
 	@param configurationClass The class indicating the type of configuration to retrieve.
 	@return The configuration of the requested type.
 	@throws ConfigurationException if no configuration of the requested type could be found.
-	@see ConfigurationManagedThreadGroup#getConfiguration(Class)
+	@see ConfigurationManaged#getConfiguration(Class)
 	@see #getDefaultConfiguration(Class)
 	*/
 	public static <C extends Configuration> C getConfiguration(final Class<C> configurationClass)
@@ -116,8 +117,8 @@ public class Configurator
 	}
 
 	/**Retrieves the configuration of the given type.
-	<p>A local configuration is first searched for using the {@link ConfigurationManagedThreadGroup},
-	if any, of the given thread. If no {@link ConfigurationManagedThreadGroup} is found for the thread,
+	<p>A local configuration is first searched for using the first {@link ConfigurationManaged} thread group,
+	if any, of the given thread. If no {@link ConfigurationManaged} thread group is found for the thread,
 	or no such configuration is set for the thread group, a default configuration is searched for
 	using {@link #getDefaultConfiguration(Class)}. If no appropriate configuration can be found,
 	A {@link ConfigurationException} is thrown.</p>
@@ -126,16 +127,16 @@ public class Configurator
 	@param configurationClass The class indicating the type of configuration to retrieve.
 	@return The configuration of the requested type.
 	@throws ConfigurationException if no configuration of the requested type could be found.
-	@see ConfigurationManagedThreadGroup#getConfiguration(Class)
+	@see ConfigurationManaged#getConfiguration(Class)
 	@see #getDefaultConfiguration(Class)
 	*/
 	protected static <C extends Configuration> C getConfiguration(final Thread thread, final Class<C> configurationClass)
 	{
 		C configuration=null;	//search for a thread-group-local configuration
-		final ConfigurationManagedThreadGroup configuratorThreadGroup=getThreadGroup(thread, ConfigurationManagedThreadGroup.class);	//get the configurator thread group
-		if(configuratorThreadGroup!=null)	//if we found the configurator thread group
+		final ConfigurationManaged configuratorManagedThreadGroup=getThreadGroup(thread, ConfigurationManaged.class);	//get the configuration managed thread group
+		if(configuratorManagedThreadGroup!=null)	//if we found the configuration managed thread group
 		{
-			configuration=configuratorThreadGroup.getConfiguration(configurationClass);	//ask the configurator thread group for the configuration
+			configuration=configuratorManagedThreadGroup.getConfiguration(configurationClass);	//ask the configurator managed thread group for the configuration
 		}
 		if(configuration==null)	//search for a default configuration
 		{
