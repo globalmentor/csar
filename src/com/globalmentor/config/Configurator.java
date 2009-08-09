@@ -18,9 +18,6 @@ package com.globalmentor.config;
 
 import static com.globalmentor.java.Threads.*;
 
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-
 /**Provides access to some configuration that may be global or local to some section of the program.
 <p>A configuration is some implementation of {@link Configuration}. A configuration of a specific type
 can be associated with some thread group, which allows local configurations to be set. A global configuration
@@ -41,8 +38,8 @@ of the requested type is found, a {@link ConfigurationException} is thrown.</p>
 public class Configurator
 {
 
-	/**The global map of default configurations keyed to their types.*/
-	private final static Map<Class<? extends Configuration>, Configuration> configurations=new ConcurrentHashMap<Class<? extends Configuration>, Configuration>();
+	/**The manager of default configurations.*/
+	private final static ConfigurationManager defaultConfigurationManager=new DefaultConfigurationManager();
 
 	/**This class cannot be publicly instantiated.*/
 	private Configurator()
@@ -54,10 +51,7 @@ public class Configurator
 	*/
 	public static void setDefaultConfigurations(final Configuration... configurations)
 	{
-		for(final Configuration configuration:configurations)	//set the given configurations
-		{
-			setDefaultConfiguration(configuration);
-		}
+		defaultConfigurationManager.setConfigurations(configurations);
 	}
 
 	/**Sets the given configuration as default for its class.
@@ -66,10 +60,9 @@ public class Configurator
 	@return The configuration previously associated with the same class, or <code>null</code> if there was no previous configuration for that class.
 	@throws NullPointerException if the given configuration is <code>null</code>.
 	*/
-	@SuppressWarnings("unchecked")
 	public static <C extends Configuration> C setDefaultConfiguration(final C configuration)
 	{
-		return setDefaultConfiguration((Class<C>)configuration.getClass(), configuration);
+		return defaultConfigurationManager.setConfiguration(configuration);
 	}
 
 	/**Sets the given configuration as default.
@@ -78,10 +71,9 @@ public class Configurator
 	@param configuration The configuration to set.
 	@return The configuration previously associated with the given class, or <code>null</code> if there was no previous configuration for that class.
 	*/
-	@SuppressWarnings("unchecked")
 	public static <C extends Configuration> C setDefaultConfiguration(final Class<C> configurationClass, final C configuration)
 	{
-		return (C)configurations.put(configurationClass, configuration);
+		return defaultConfigurationManager.setConfiguration(configurationClass, configuration);
 	}
 
 	/**Returns the default configuration for the given configuration type.
@@ -89,10 +81,9 @@ public class Configurator
 	@param configurationClass The class of configuration to retrieve.
 	@return The configuration associated with the given class, or <code>null</code> if there was no configuration for that class.
 	 */
-	@SuppressWarnings("unchecked")
 	public static <C extends Configuration> C getDefaultConfiguration(final Class<C> configurationClass)
 	{
-		return (C)configurations.get(configurationClass);
+		return defaultConfigurationManager.getConfiguration(configurationClass);
 	}
 
 	/**Removes a default configuration of the given type.
@@ -101,10 +92,9 @@ public class Configurator
 	@param configurationClass The class with which the configuration is associated.
 	@return The configuration previously associated with the given class, or <code>null</code> if there was no previous configuration for that class.
 	*/
-	@SuppressWarnings("unchecked")
 	public static <C extends Configuration> C removeDefaultConfiguration(final Class<C> configurationClass)
 	{
-		return (C)configurations.remove(configurationClass);
+		return defaultConfigurationManager.removeConfiguration(configurationClass);
 	}
 
 	/**Retrieves the configuration of the given type for the given thread.
