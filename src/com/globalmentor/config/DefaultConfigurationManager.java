@@ -16,60 +16,37 @@
 
 package com.globalmentor.config;
 
-/**A configuration that allows the setting and retrieval of a configuration on a per-thread-group basis.
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
+/**Default implementation of a manager of configurations.
+This class is concurrent thread-safe.
 @author Garret Wilson
 @see Configurator
 */
-public class MutableConfiguratorThreadGroup extends ConfiguratorThreadGroup implements ConfigurationManager
+public class DefaultConfigurationManager implements ConfigurationManager
 {
 
-	/**Thread group name constructor.
-	Creates a thread group using the current thread as the parent.
-	@param name The name of the new thread group.
-	@param configurations The available configurations to set.
-	@throws SecurityException If the current thread cannot create a thread in the specified thread group.
-	@see SecurityException
-	@see ThreadGroup#checkAccess()
-	@see #setConfiguration(Configuration)
-	*/
-	public MutableConfiguratorThreadGroup(final String name, final Configuration... configurations)
-	{
-		this(Thread.currentThread().getThreadGroup(), name, configurations);
-	}
-
-	/**Thread group parent and thread group name constructor. 
-	@param parent The parent thread group.
-	@param name The name of the new thread group.
-	@param configurations The available configurations to set.
-	@throws NullPointerException if the given parent is <code>null</code>. 
-	@throws SecurityException If the current thread cannot create a thread in the specified thread group.
-	@see SecurityException
-	@see ThreadGroup#checkAccess()
-	@see #setConfiguration(Configuration)
-	*/
-	public MutableConfiguratorThreadGroup(final ThreadGroup parent, final String name, final Configuration... configurations)
-	{
-		super(parent, name, configurations);
-	}
+	/**The map of configurations keyed to their types.*/
+	private final Map<Class<? extends Configuration>, Configuration> configurations=new ConcurrentHashMap<Class<? extends Configuration>, Configuration>();
 
 	/**Sets the given configurations, associating them with their respective classes.
-	This version is overridden solely to provide public access to the method.
 	@param configurations The configurations to set.
 	*/
-	@Override
 	public final void setConfigurations(final Configuration... configurations)
 	{
-		super.setConfigurations(configurations);
+		for(final Configuration configuration:configurations)	//set the given configurations
+		{
+			setConfiguration(configuration);
+		}
 	}
 
 	/**Sets the given configuration, associating it with its class.
-	This version is overridden solely to provide public access to the method.
 	@param <C> The type of configuration being set.
 	@param configuration The configuration to set.
 	@return The configuration previously associated with the same class, or <code>null</code> if there was no previous configuration for that class.
 	@throws NullPointerException if the given configuration is <code>null</code>.
 	*/
-	@Override
 	@SuppressWarnings("unchecked")
 	public final <C extends Configuration> C setConfiguration(final C configuration)
 	{
@@ -77,28 +54,37 @@ public class MutableConfiguratorThreadGroup extends ConfiguratorThreadGroup impl
 	}
 
 	/**Sets the given configuration.
-	This version is overridden solely to provide public access to the method.
 	@param <C> The type of configuration being set.
 	@param configurationClass The class with which to associate the configuration.
 	@param configuration The configuration to set.
 	@return The configuration previously associated with the given class, or <code>null</code> if there was no previous configuration for that class.
 	*/
-	@Override
-	public <C extends Configuration> C setConfiguration(final Class<C> configurationClass, final C configuration)
+	@SuppressWarnings("unchecked")
+	public final <C extends Configuration> C setConfiguration(final Class<C> configurationClass, final C configuration)
 	{
-		return super.setConfiguration(configurationClass, configuration);
+		return (C)configurations.put(configurationClass, configuration);
+	}
+
+	/**Returns the configuration for the given configuration type.
+	@param <C> The type of configuration to retrieve.
+	@param configurationClass The class of configuration to retrieve.
+	@return The configuration associated with the given class, or <code>null</code> if there was no configuration for that class.
+	 */
+	@SuppressWarnings("unchecked")
+	public <C extends Configuration> C getConfiguration(final Class<C> configurationClass)
+	{
+		return (C)configurations.get(configurationClass);
 	}
 
 	/**Removes a configuration of the given type.
-	This version is overridden solely to provide public access to the method.
 	If no configuration is associated with the specified type, no action occurs.
 	@param <C> The type of configuration being removed.
 	@param configurationClass The class with which the configuration is associated.
 	@return The configuration previously associated with the given class, or <code>null</code> if there was no previous configuration for that class.
 	*/
-	@Override
+	@SuppressWarnings("unchecked")
 	public <C extends Configuration> C removeConfiguration(final Class<C> configurationClass)
 	{
-		return super.removeConfiguration(configurationClass);
+		return (C)configurations.remove(configurationClass);
 	}
 }

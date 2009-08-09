@@ -16,8 +16,7 @@
 
 package com.globalmentor.config;
 
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+import static com.globalmentor.java.Objects.*;
 
 /**A configuration that allows the retrieval of a configuration on a per-thread-group basis.
 @author Garret Wilson
@@ -26,11 +25,12 @@ import java.util.concurrent.ConcurrentHashMap;
 public class ConfiguratorThreadGroup extends ThreadGroup
 {
 
-	/**The map of configurations keyed to their types.*/
-	private final Map<Class<? extends Configuration>, Configuration> configurations=new ConcurrentHashMap<Class<? extends Configuration>, Configuration>();
+	/**The implementation for managing configurations for this thread group.*/
+	private final ConfigurationManager configurationManager;
 
 	/**Thread group name constructor.
 	Creates a thread group using the current thread as the parent.
+	The default configuration manager is used.
 	@param name The name of the new thread group.
 	@param configurations The available configurations to set.
 	@throws SecurityException If the current thread cannot create a thread in the specified thread group.
@@ -44,6 +44,7 @@ public class ConfiguratorThreadGroup extends ThreadGroup
 	}
 
 	/**Thread group parent and thread group name constructor. 
+	The default configuration manager is used.
 	@param parent The parent thread group.
 	@param name The name of the new thread group.
 	@param configurations The available configurations to set.
@@ -55,7 +56,40 @@ public class ConfiguratorThreadGroup extends ThreadGroup
 	*/
 	public ConfiguratorThreadGroup(final ThreadGroup parent, final String name, final Configuration... configurations)
 	{
+		this(parent, name, new DefaultConfigurationManager(), configurations);
+	}
+
+	/**Thread group name constructor.
+	Creates a thread group using the current thread as the parent.
+	@param name The name of the new thread group.
+	@param configurationManager The implementation for managing configurations for this thread group.
+	@param configurations The available configurations to set.
+	@throws NullPointerException if the given configuration manager is <code>null</code>. 
+	@throws SecurityException If the current thread cannot create a thread in the specified thread group.
+	@see SecurityException
+	@see ThreadGroup#checkAccess()
+	@see #setConfiguration(Configuration)
+	*/
+	public ConfiguratorThreadGroup(final String name, final ConfigurationManager configurationManager, final Configuration... configurations)
+	{
+		this(Thread.currentThread().getThreadGroup(), name, configurationManager, configurations);
+	}
+
+	/**Thread group parent and thread group name constructor. 
+	@param parent The parent thread group.
+	@param name The name of the new thread group.
+	@param configurationManager The implementation for managing configurations for this thread group.
+	@param configurations The available configurations to set.
+	@throws NullPointerException if the given parent and/or configuration manager is <code>null</code>. 
+	@throws SecurityException If the current thread cannot create a thread in the specified thread group.
+	@see SecurityException
+	@see ThreadGroup#checkAccess()
+	@see #setConfiguration(Configuration)
+	*/
+	public ConfiguratorThreadGroup(final ThreadGroup parent, final String name, final ConfigurationManager configurationManager, final Configuration... configurations)
+	{
 		super(parent, name);
+		this.configurationManager=checkInstance(configurationManager, "Configuration manager cannot be null.");
 		setConfigurations(configurations);
 	}
 
@@ -64,10 +98,7 @@ public class ConfiguratorThreadGroup extends ThreadGroup
 	*/
 	protected void setConfigurations(final Configuration... configurations)
 	{
-		for(final Configuration configuration:configurations)	//set the given configurations
-		{
-			setConfiguration(configuration);
-		}
+		configurationManager.setConfigurations(configurations);
 	}
 
 	/**Sets the given configuration, associating it with its class.
@@ -76,10 +107,9 @@ public class ConfiguratorThreadGroup extends ThreadGroup
 	@return The configuration previously associated with the same class, or <code>null</code> if there was no previous configuration for that class.
 	@throws NullPointerException if the given configuration is <code>null</code>.
 	*/
-	@SuppressWarnings("unchecked")
 	protected <C extends Configuration> C setConfiguration(final C configuration)
 	{
-		return setConfiguration((Class<C>)configuration.getClass(), configuration);
+		return configurationManager.setConfiguration(configuration);
 	}
 
 	/**Sets the given configuration.
@@ -88,10 +118,9 @@ public class ConfiguratorThreadGroup extends ThreadGroup
 	@param configuration The configuration to set.
 	@return The configuration previously associated with the given class, or <code>null</code> if there was no previous configuration for that class.
 	*/
-	@SuppressWarnings("unchecked")
 	protected <C extends Configuration> C setConfiguration(final Class<C> configurationClass, final C configuration)
 	{
-		return (C)configurations.put(configurationClass, configuration);
+		return configurationManager.setConfiguration(configurationClass, configuration);
 	}
 
 	/**Returns the configuration for the given configuration type.
@@ -99,10 +128,9 @@ public class ConfiguratorThreadGroup extends ThreadGroup
 	@param configurationClass The class of configuration to retrieve.
 	@return The configuration associated with the given class, or <code>null</code> if there was no configuration for that class.
 	 */
-	@SuppressWarnings("unchecked")
 	public <C extends Configuration> C getConfiguration(final Class<C> configurationClass)
 	{
-		return (C)configurations.get(configurationClass);
+		return configurationManager.getConfiguration(configurationClass);
 	}
 
 	/**Removes a configuration of the given type.
@@ -111,9 +139,9 @@ public class ConfiguratorThreadGroup extends ThreadGroup
 	@param configurationClass The class with which the configuration is associated.
 	@return The configuration previously associated with the given class, or <code>null</code> if there was no previous configuration for that class.
 	*/
-	@SuppressWarnings("unchecked")
 	protected <C extends Configuration> C removeConfiguration(final Class<C> configurationClass)
 	{
-		return (C)configurations.remove(configurationClass);
+		return configurationManager.removeConfiguration(configurationClass);
 	}
+
 }
