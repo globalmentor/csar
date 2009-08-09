@@ -27,7 +27,7 @@ public interface ConfigurationManaged
 	@param <C> The type of configuration to retrieve.
 	@param configurationClass The class of configuration to retrieve.
 	@return The configuration associated with the given class, or <code>null</code> if there was no configuration for that class.
-	 */
+ */
 	public <C extends Configuration> C getConfiguration(final Class<C> configurationClass);
 
 }
