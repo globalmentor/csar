@@ -19,6 +19,8 @@ package com.globalmentor.config;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import static com.globalmentor.java.Objects.*;
+
 /**Default implementation of a manager of configurations.
 This class is concurrent thread-safe.
 @author Garret Wilson
@@ -58,11 +60,12 @@ public class DefaultConfigurationManager implements ConfigurationManager
 	@param configurationClass The class with which to associate the configuration.
 	@param configuration The configuration to set.
 	@return The configuration previously associated with the given class, or <code>null</code> if there was no previous configuration for that class.
+	@throws NullPointerException if the given configuration is <code>null</code>.
 	*/
 	@SuppressWarnings("unchecked")
 	public final <C extends Configuration> C setConfiguration(final Class<C> configurationClass, final C configuration)
 	{
-		return (C)configurations.put(configurationClass, configuration);
+		return (C)configurations.put(configurationClass, checkInstance(configuration, "Configuration cannot be null."));
 	}
 
 	/**Returns the configuration for the given configuration type.

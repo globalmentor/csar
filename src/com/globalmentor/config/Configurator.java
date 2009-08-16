@@ -71,6 +71,7 @@ public class Configurator
 	@param configurationClass The class with which to associate the configuration.
 	@param configuration The configuration to set.
 	@return The configuration previously associated with the given class, or <code>null</code> if there was no previous configuration for that class.
+	@throws NullPointerException if the given configuration is <code>null</code>.
 	*/
 	public static <C extends Configuration> C setDefaultConfiguration(final Class<C> configurationClass, final C configuration)
 	{
