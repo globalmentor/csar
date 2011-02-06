@@ -16,11 +16,14 @@
 
 package com.globalmentor.config;
 
-/**Represents a configuration that can be specified locally via a {@link ConfigurationManagedThreadGroup},
-or as a global default using {@link Configurator#setDefaultConfiguration(Configuration)}.
-@author Garret Wilson
-@see Configurator
-*/
-public interface Configuration
+import com.globalmentor.java.Disposable;
+
+/**
+ * Represents a configuration that can be specified locally via a {@link ConfigurationManagedThreadGroup}, or as a
+ * global default using {@link Configurator#setDefaultConfiguration(Configuration)}.
+ * @author Garret Wilson
+ * @see Configurator
+ */
+public interface Configuration extends Disposable
 {
 }
