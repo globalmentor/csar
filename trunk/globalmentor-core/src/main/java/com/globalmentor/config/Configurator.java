@@ -141,7 +141,7 @@ public class Configurator
 		}
 		if(configuration==null)	//search for a default configuration
 		{
-			configuration=getDefaultConfiguration(configurationClass);	//find a default configuraiotn
+			configuration=getDefaultConfiguration(configurationClass);	//find a default configuration
 		}
 		if(configuration==null)	//if no configuration could be found
 		{
