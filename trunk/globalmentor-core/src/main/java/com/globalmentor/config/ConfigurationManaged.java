@@ -16,18 +16,19 @@
 
 package com.globalmentor.config;
 
-/**An object that can retrieve configurations.
-@author Garret Wilson
-@see Configurator
-*/
-public interface ConfigurationManaged
-{
-
-	/**Returns the configuration for the given configuration type.
-	@param <C> The type of configuration to retrieve.
-	@param configurationClass The class of configuration to retrieve.
-	@return The configuration associated with the given class, or <code>null</code> if there was no configuration for that class.
+/**
+ * An object that can retrieve configurations.
+ * @author Garret Wilson
+ * @see Configurator
  */
+public interface ConfigurationManaged {
+
+	/**
+	 * Returns the configuration for the given configuration type.
+	 * @param <C> The type of configuration to retrieve.
+	 * @param configurationClass The class of configuration to retrieve.
+	 * @return The configuration associated with the given class, or <code>null</code> if there was no configuration for that class.
+	 */
 	public <C extends Configuration> C getConfiguration(final Class<C> configurationClass);
 
 }

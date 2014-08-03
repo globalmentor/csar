@@ -16,41 +16,44 @@
 
 package com.globalmentor.config;
 
-/**A manager of configurations.
-@author Garret Wilson
-@see Configurator
-*/
-public interface ConfigurationManager extends ConfigurationManaged
-{
+/**
+ * A manager of configurations.
+ * @author Garret Wilson
+ * @see Configurator
+ */
+public interface ConfigurationManager extends ConfigurationManaged {
 
-	/**Sets the given configurations, associating them with their respective classes.
-	@param configurations The configurations to set.
-	*/
+	/**
+	 * Sets the given configurations, associating them with their respective classes.
+	 * @param configurations The configurations to set.
+	 */
 	public void setConfigurations(final Configuration... configurations);
 
-	/**Sets the given configuration, associating it with its class.
-	@param <C> The type of configuration being set.
-	@param configuration The configuration to set.
-	@return The configuration previously associated with the same class, or <code>null</code> if there was no previous configuration for that class.
-	@throws NullPointerException if the given configuration is <code>null</code>.
-	*/
+	/**
+	 * Sets the given configuration, associating it with its class.
+	 * @param <C> The type of configuration being set.
+	 * @param configuration The configuration to set.
+	 * @return The configuration previously associated with the same class, or <code>null</code> if there was no previous configuration for that class.
+	 * @throws NullPointerException if the given configuration is <code>null</code>.
+	 */
 	public <C extends Configuration> C setConfiguration(final C configuration);
 
-	/**Sets the given configuration.
-	@param <C> The type of configuration being set.
-	@param configurationClass The class with which to associate the configuration.
-	@param configuration The configuration to set.
-	@return The configuration previously associated with the given class, or <code>null</code> if there was no previous configuration for that class.
-	@throws NullPointerException if the given configuration is <code>null</code>.
-	*/
+	/**
+	 * Sets the given configuration.
+	 * @param <C> The type of configuration being set.
+	 * @param configurationClass The class with which to associate the configuration.
+	 * @param configuration The configuration to set.
+	 * @return The configuration previously associated with the given class, or <code>null</code> if there was no previous configuration for that class.
+	 * @throws NullPointerException if the given configuration is <code>null</code>.
+	 */
 	public <C extends Configuration> C setConfiguration(final Class<C> configurationClass, final C configuration);
 
-	/**Removes a configuration of the given type.
-	If no configuration is associated with the specified type, no action occurs.
-	@param <C> The type of configuration being removed.
-	@param configurationClass The class with which the configuration is associated.
-	@return The configuration previously associated with the given class, or <code>null</code> if there was no previous configuration for that class.
-	*/
+	/**
+	 * Removes a configuration of the given type. If no configuration is associated with the specified type, no action occurs.
+	 * @param <C> The type of configuration being removed.
+	 * @param configurationClass The class with which the configuration is associated.
+	 * @return The configuration previously associated with the given class, or <code>null</code> if there was no previous configuration for that class.
+	 */
 	public <C extends Configuration> C removeConfiguration(final Class<C> configurationClass);
 
 }
