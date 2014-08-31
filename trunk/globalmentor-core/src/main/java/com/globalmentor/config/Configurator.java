@@ -42,7 +42,7 @@ import static com.globalmentor.java.Threads.*;
 public class Configurator {
 
 	/** The manager of default configurations. */
-	private final static ConfigurationManager defaultConfigurationManager = new DefaultConfigurationManager();
+	private static final ConfigurationManager defaultConfigurationManager = new DefaultConfigurationManager();
 
 	/** This class cannot be publicly instantiated. */
 	private Configurator() {
