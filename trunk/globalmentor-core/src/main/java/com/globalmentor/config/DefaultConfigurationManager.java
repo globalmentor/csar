@@ -16,10 +16,10 @@
 
 package com.globalmentor.config;
 
+import static java.util.Objects.*;
+
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-
-import static com.globalmentor.java.Objects.*;
 
 /**
  * Default implementation of a manager of configurations. This class is concurrent thread-safe.
@@ -63,7 +63,7 @@ public class DefaultConfigurationManager implements ConfigurationManager {
 	 */
 	@SuppressWarnings("unchecked")
 	public final <C extends Configuration> C setConfiguration(final Class<C> configurationClass, final C configuration) {
-		return (C)configurations.put(configurationClass, checkInstance(configuration, "Configuration cannot be null."));
+		return (C)configurations.put(configurationClass, requireNonNull(configuration, "Configuration cannot be null."));
 	}
 
 	/**

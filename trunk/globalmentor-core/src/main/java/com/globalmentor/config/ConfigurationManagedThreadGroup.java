@@ -16,7 +16,7 @@
 
 package com.globalmentor.config;
 
-import static com.globalmentor.java.Objects.*;
+import static java.util.Objects.*;
 
 /**
  * A thread group that allows the retrieval of a configuration on a per-thread-group basis. This implementation decorates an existing configuration managed
@@ -61,7 +61,7 @@ public class ConfigurationManagedThreadGroup extends ThreadGroup implements Conf
 	 */
 	public ConfigurationManagedThreadGroup(final ThreadGroup parent, final String name, final ConfigurationManaged configurationManaged) {
 		super(parent, name);
-		this.configurationManaged = checkInstance(configurationManaged, "Configuration manager cannot be null.");
+		this.configurationManaged = requireNonNull(configurationManaged, "Configuration manager cannot be null.");
 	}
 
 	/**

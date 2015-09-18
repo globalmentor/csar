@@ -49,7 +49,7 @@ public class Configurator {
 	}
 
 	/**
-	 * Sets the given configurations as defualts for their respective classes.
+	 * Sets the given configurations as defaults for their respective classes.
 	 * @param configurations The configurations to set.
 	 */
 	public static void setDefaultConfigurations(final Configuration... configurations) {
