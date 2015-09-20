@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.globalmentor.config;
+package com.globalmentor.concern;
 
 /**
  * An unchecked illegal state exception to indicate that a particular concern could not be located.

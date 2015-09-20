@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.globalmentor.config;
+package com.globalmentor.concern;
 
 import static com.globalmentor.java.Threads.*;
 

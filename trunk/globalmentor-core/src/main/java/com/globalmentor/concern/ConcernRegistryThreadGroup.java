@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.globalmentor.config;
+package com.globalmentor.concern;
 
 /**
  * A thread group that allows the setting and retrieval of a concern on a per-thread-group basis.

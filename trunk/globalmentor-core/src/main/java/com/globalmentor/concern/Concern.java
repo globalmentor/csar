@@ -14,22 +14,18 @@
  * limitations under the License.
  */
 
-package com.globalmentor.config;
+package com.globalmentor.concern;
 
 /**
- * An object that can retrieve <a href="https://en.wikipedia.org/wiki/Concern_%28computer_science%29>concerns</a>s.
+ * Represents a <a href=
+ * "https://en.wikipedia.org/wiki/Concern_%28computer_science%29>concern</a> (usually a <a href=" https://en.wikipedia.org/wiki/Cross-cutting_concern">cross-
+ * cutting concern</a>) of a program such as logging or internationalization.
+ * <p>
+ * This framework allows concerns to be specified locally via a {@link ConcernedThreadGroup}, or as a global default using
+ * {@link Concerns#registerDefaultConcern(Concern)}.
+ * </p>
  * @author Garret Wilson
- * @see Concern
  * @see Concerns
  */
-public interface Concerned {
-
-	/**
-	 * Returns the concern for the given concern type.
-	 * @param <C> The type of concern to retrieve.
-	 * @param concernClass The class of concern to retrieve.
-	 * @return The concern associated with the given class, or <code>null</code> if there was no concern for that class.
-	 */
-	public <C extends Concern> C getConcern(final Class<C> concernClass);
-
+public interface Concern {
 }
