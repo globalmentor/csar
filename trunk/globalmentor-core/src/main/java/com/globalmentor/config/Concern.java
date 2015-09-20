@@ -17,18 +17,15 @@
 package com.globalmentor.config;
 
 /**
- * An object that can retrieve configurations.
+ * Represents a <a href=
+ * "https://en.wikipedia.org/wiki/Concern_%28computer_science%29>concern</a> (usually a <a href=" https://en.wikipedia.org/wiki/Cross-cutting_concern">cross-
+ * cutting concern</a>) of a program such as logging or internationalization.
+ * <p>
+ * This framework allows concerns to be specified locally via a {@link ConcernedThreadGroup}, or as a global default using
+ * {@link Concerns#registerDefaultConcern(Concern)}.
+ * </p>
  * @author Garret Wilson
- * @see Configurator
+ * @see Concerns
  */
-public interface ConfigurationManaged {
-
-	/**
-	 * Returns the configuration for the given configuration type.
-	 * @param <C> The type of configuration to retrieve.
-	 * @param configurationClass The class of configuration to retrieve.
-	 * @return The configuration associated with the given class, or <code>null</code> if there was no configuration for that class.
-	 */
-	public <C extends Configuration> C getConfiguration(final Class<C> configurationClass);
-
+public interface Concern {
 }

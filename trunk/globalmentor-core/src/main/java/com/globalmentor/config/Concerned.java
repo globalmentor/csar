@@ -17,10 +17,19 @@
 package com.globalmentor.config;
 
 /**
- * Represents a configuration that can be specified locally via a {@link ConfigurationManagedThreadGroup}, or as a global default using
- * {@link Configurator#setDefaultConfiguration(Configuration)}.
+ * An object that can retrieve <a href="https://en.wikipedia.org/wiki/Concern_%28computer_science%29>concerns</a>s.
  * @author Garret Wilson
- * @see Configurator
+ * @see Concern
+ * @see Concerns
  */
-public interface Configuration {
+public interface Concerned {
+
+	/**
+	 * Returns the concern for the given concern type.
+	 * @param <C> The type of concern to retrieve.
+	 * @param concernClass The class of concern to retrieve.
+	 * @return The concern associated with the given class, or <code>null</code> if there was no concern for that class.
+	 */
+	public <C extends Concern> C getConcern(final Class<C> concernClass);
+
 }
