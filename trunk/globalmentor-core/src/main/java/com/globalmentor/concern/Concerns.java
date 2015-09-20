@@ -16,8 +16,6 @@
 
 package com.globalmentor.concern;
 
-import static com.globalmentor.java.Threads.*;
-
 /**
  * Provides access to some concern that may be global or local to some section of the program.
  * <p>
@@ -145,6 +143,43 @@ public class Concerns {
 			throw new ConcernNotFoundException("No local or default concern could be found for concern type " + concernClass.getName());
 		}
 		return concern; //return the concern we found
+	}
+
+	/**
+	 * Walks up the thread group chain of the given thread to find the thread group of the given type.
+	 * <p>
+	 * Necessary duplication of code originally in <code>com.globalmentor.java.Threads</code>.
+	 * </p>
+	 * @param <TG> The type of thread group to find.
+	 * @param thread The thread at which the thread group search should begin.
+	 * @param threadGroupClass The class of the type of thread group to find.
+	 * @return The first thread group of the given type, or <code>null</code> if no thread group of the given type could be found.
+	 * @throws NullPointerException if the given thread and/or thread group class is <code>null</code>.
+	 */
+	private static <TG> TG getThreadGroup(final Thread thread, final Class<TG> threadGroupClass) {
+		final ThreadGroup threadGroup = thread.getThreadGroup(); //get the thread's thread group
+		return threadGroup != null ? getThreadGroup(threadGroup, threadGroupClass) : null; //if the thread has a thread group, look for the thread group of the requested type 
+	}
+
+	/**
+	 * Walks up the thread group chain of the given thread group to find the thread group of the given type or that implements the given interface.
+	 * <p>
+	 * Necessary duplication of code originally in <code>com.globalmentor.java.Threads</code>.
+	 * </p>
+	 * @param <TG> The type of thread group to find.
+	 * @param threadGroup The thread group at which the search should begin.
+	 * @param threadGroupClass The class of the type of thread group to find.
+	 * @return The first thread group of the given type, or <code>null</code> if no thread group of the given type could be found.
+	 * @throws NullPointerException if the given thread group and/or thread group class is <code>null</code>.
+	 */
+	private static <TG> TG getThreadGroup(ThreadGroup threadGroup, final Class<TG> threadGroupClass) {
+		do {
+			if(threadGroupClass.isInstance(threadGroup)) { //if this is the required thread group type
+				return threadGroupClass.cast(threadGroup); //return the thread group as the type
+			}
+			threadGroup = threadGroup.getParent(); //check this thread group's parent thread group
+		} while(threadGroup != null); //stop looking if we run out of thread groups
+		return null; //we were unable to find the required thread group
 	}
 
 }
