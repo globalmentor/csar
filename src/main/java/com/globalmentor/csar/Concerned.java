@@ -17,7 +17,7 @@
 package com.globalmentor.csar;
 
 /**
- * An object that can retrieve <a href="https://en.wikipedia.org/wiki/Concern_%28computer_science%29>concerns</a>s.
+ * An object that can retrieve <a href="https://en.wikipedia.org/wiki/Concern_%28computer_science%29">concerns</a>s.
  * @author Garret Wilson
  * @see Concern
  * @see Csar

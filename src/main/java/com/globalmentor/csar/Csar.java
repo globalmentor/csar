@@ -37,6 +37,7 @@ package com.globalmentor.csar;
  * </p>
  * @author Garret Wilson
  * @see <a href="https://en.wikipedia.org/wiki/Concern_%28computer_science%29">Concern (computer science)</a>
+ * @see <a href="https://en.wikipedia.org/wiki/Cross-cutting_concern">Cross-cutting concern</a>
  */
 public class Csar {
 
