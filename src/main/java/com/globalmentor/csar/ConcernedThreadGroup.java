@@ -41,7 +41,7 @@ public class ConcernedThreadGroup extends ThreadGroup implements Concerned {
 	 * @throws SecurityException If the current thread cannot create a thread in the specified thread group.
 	 * @see SecurityException
 	 * @see ThreadGroup#checkAccess()
-	 * @see #registerConcern(Concern)
+	 * @see ConcernRegistry#registerConcern(Concern)
 	 */
 	public ConcernedThreadGroup(final String name, final Concerned concerned) {
 		this(Thread.currentThread().getThreadGroup(), name, concerned);
@@ -56,7 +56,7 @@ public class ConcernedThreadGroup extends ThreadGroup implements Concerned {
 	 * @throws SecurityException If the current thread cannot create a thread in the specified thread group.
 	 * @see SecurityException
 	 * @see ThreadGroup#checkAccess()
-	 * @see #registerConcern(Concern)
+	 * @see ConcernRegistry#registerConcern(Concern)
 	 */
 	public ConcernedThreadGroup(final ThreadGroup parent, final String name, final Concerned concerned) {
 		super(parent, name);
