@@ -19,7 +19,7 @@ package com.globalmentor.csar;
 /**
  * A thread group that allows the setting and retrieval of a concern on a per-thread-group basis.
  * @author Garret Wilson
- * @see Concerns
+ * @see Csar
  */
 public class ConcernRegistryThreadGroup extends ConcernedThreadGroup implements ConcernRegistry {
 

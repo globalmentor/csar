@@ -17,32 +17,34 @@
 package com.globalmentor.csar;
 
 /**
- * Provides access to some concern that may be global or local to some section of the program.
+ * The Concern Separation Aspect Registrar (Csar) provides access to some concern (usually cross-cutting) that may configured globally or locally to some
+ * section of the program.
  * <p>
- * A <a href="https://en.wikipedia.org/wiki/Concern_%28computer_science%29>concern</a> is some implementation of {@link Concern} and represents some concern
- * such as logging or internationalization. A concern of a specific type can be associated with some thread group, which allows local concerns to be set. A
- * global concern can also be set, which which serves as a fallback for that concern type when no thread group-specific concern is defined. No fallback need be
- * implemented if a thread group-specific concern is always provided to requesting threads.
+ * A <dfn>concern</dfn> is some implementation of {@link Concern} and represents some concern such as logging or internationalization. Csar supports associating
+ * a concern of a specific type with some thread group, which allows local concerns to be set. A global concern can also be set, which which serves as a
+ * fallback for that concern type when no thread group-specific concern is defined. No fallback need be implemented if a thread group-specific concern is always
+ * provided to requesting threads.
  * </p>
  * <p>
  * A concern can be made local by registering it with a thread group that is {@link Concerned}, such as {@link ConcernRegistryThreadGroup} , and creating a
  * {@link Thread} using one of the thread's constructors that specify a {@link ThreadGroup}. All threads that run in the thread group will have access to the
- * concern by calling {@link Concerns#getConcern(Class)}, specifying the class of the {@link Concern} implementation. The concern registered with the
+ * concern by calling {@link Csar#getConcern(Class)}, specifying the class of the {@link Concern} implementation. The concern registered with the
  * {@link Concerned} thread group will be returned. A concern can thus be restricted to specific areas of the program.
  * </p>
  * <p>
- * If no thread group is found that implements the concern type, a global default concern is searched for by using {@link Concerns#getDefaultConcern(Class)}. If
- * no local or global concern of the requested type is found, a {@link ConcernNotFoundException} is thrown.
+ * If no thread group is found that implements the concern type, a global default concern is searched for by using {@link Csar#getDefaultConcern(Class)}. If no
+ * local or global concern of the requested type is found, a {@link ConcernNotFoundException} is thrown.
  * </p>
  * @author Garret Wilson
+ * @see <a href="https://en.wikipedia.org/wiki/Concern_%28computer_science%29">Concern (computer science)</a>
  */
-public class Concerns {
+public class Csar {
 
 	/** The registry of fallback concerns. */
 	private static final ConcernRegistry defaultConcernRegistry = new DefaultConcernRegistry();
 
 	/** This class cannot be publicly instantiated. */
-	private Concerns() {
+	private Csar() {
 	}
 
 	/**

@@ -19,7 +19,7 @@ package com.globalmentor.csar;
 /**
  * A registry of concerns.
  * @author Garret Wilson
- * @see Concerns
+ * @see Csar
  */
 public interface ConcernRegistry extends Concerned {
 

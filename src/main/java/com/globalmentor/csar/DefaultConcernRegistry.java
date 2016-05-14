@@ -24,7 +24,7 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * Default implementation of a registry of concerns. This class is concurrent thread-safe.
  * @author Garret Wilson
- * @see Concerns
+ * @see Csar
  */
 public class DefaultConcernRegistry implements ConcernRegistry {
 

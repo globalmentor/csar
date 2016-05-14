@@ -21,7 +21,7 @@ import static java.util.Objects.*;
 /**
  * A thread group that allows the retrieval of a concern on a per-thread-group basis. This implementation decorates an existing concerned object.
  * @author Garret Wilson
- * @see Concerns
+ * @see Csar
  */
 public class ConcernedThreadGroup extends ThreadGroup implements Concerned {
 

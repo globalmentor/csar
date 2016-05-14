@@ -22,10 +22,10 @@ package com.globalmentor.csar;
  * cutting concern</a>) of a program such as logging or internationalization.
  * <p>
  * This framework allows concerns to be specified locally via a {@link ConcernedThreadGroup}, or as a global default using
- * {@link Concerns#registerDefaultConcern(Concern)}.
+ * {@link Csar#registerDefaultConcern(Concern)}.
  * </p>
  * @author Garret Wilson
- * @see Concerns
+ * @see Csar
  */
 public interface Concern {
 }
