@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.globalmentor.concern;
+package com.globalmentor.csar;
 
 /**
  * Provides access to some concern that may be global or local to some section of the program.

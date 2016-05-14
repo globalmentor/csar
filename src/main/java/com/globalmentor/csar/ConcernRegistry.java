@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.globalmentor.concern;
+package com.globalmentor.csar;
 
 /**
  * A registry of concerns.
