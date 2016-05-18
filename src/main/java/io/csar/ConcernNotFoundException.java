@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.globalmentor.csar;
+package io.csar;
 
 /**
  * An unchecked illegal state exception to indicate that a particular concern could not be located.
