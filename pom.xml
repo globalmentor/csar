@@ -54,7 +54,7 @@
 						<artifactId>maven-javadoc-plugin</artifactId>
 						<version>2.10.3</version>
 						<configuration>
-							<bottom><![CDATA[<em>Copyright © 2009-2016 GlobalMentor, Inc. All Rights Reserved.</em>]]></bottom>
+							<bottom><![CDATA[<small>Copyright © 2009-2016 GlobalMentor, Inc. All Rights Reserved.</small>]]></bottom>
 							<quiet>true</quiet>
 						</configuration>
 						<executions>
