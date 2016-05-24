@@ -8,7 +8,37 @@
 	<packaging>jar</packaging>
 
 	<name>Concern Separation Aspect Registrar (Csar)</name>
+	<description>Csar (/zɑːr/) provides access to concerns (usually cross-cutting) configured globally or locally.</description>
 	<url>http://csar.io/</url>
+	<inceptionYear>2009</inceptionYear>
+
+	<licenses>
+		<license>
+			<name>Apache License, Version 2.0</name>
+			<url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+			<distribution>repo</distribution>
+		</license>
+	</licenses>
+
+	<organization>
+		<name>GlobalMentor, Inc.</name>
+		<url>http://www.globalmentor.com/</url>
+	</organization>
+
+	<developers>
+		<developer>
+			<name>Garret Wilson</name>
+			<email>garret@globalmentor.com</email>
+			<organization>GlobalMentor, Inc.</organization>
+			<organizationUrl>http://www.globalmentor.com/</organizationUrl>
+		</developer>
+	</developers>
+
+	<scm>
+		<connection>scm:git:https://bitbucket.org/globalmentor/csar.git</connection>
+		<developerConnection>scm:git:https://bitbucket.org/globalmentor/csar.git</developerConnection>
+		<url>https://bitbucket.org/globalmentor/csar</url>
+	</scm>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -25,15 +55,37 @@
 					<target>1.8</target>
 				</configuration>
 			</plugin>
+
+			<plugin>
+				<groupId>org.sonatype.plugins</groupId>
+				<artifactId>nexus-staging-maven-plugin</artifactId>
+				<version>1.6.7</version>
+				<extensions>true</extensions>
+				<configuration>
+					<serverId>ossrh</serverId>
+					<nexusUrl>https://oss.sonatype.org/</nexusUrl>
+					<autoReleaseAfterClose>true</autoReleaseAfterClose>
+				</configuration>
+			</plugin>
 		</plugins>
 	</build>
+
+	<distributionManagement>
+		<snapshotRepository>
+			<id>ossrh</id>
+			<url>https://oss.sonatype.org/content/repositories/snapshots</url>
+		</snapshotRepository>
+		<repository>
+			<id>ossrh</id>
+			<url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+		</repository>
+	</distributionManagement>
 
 	<profiles>
 		<profile>
 			<id>release</id>
 			<build>
 				<plugins>
-					<!--source jar -->
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-source-plugin</artifactId>
@@ -48,13 +100,11 @@
 						</executions>
 					</plugin>
 
-					<!--javadoc -->
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-javadoc-plugin</artifactId>
 						<version>2.10.3</version>
 						<configuration>
-							<bottom><![CDATA[<small>Copyright © 2009-2016 GlobalMentor, Inc. All Rights Reserved.</small>]]></bottom>
 							<quiet>true</quiet>
 						</configuration>
 						<executions>
@@ -63,6 +113,23 @@
 								<goals>
 									<goal>jar</goal>
 								</goals>
+							</execution>
+						</executions>
+					</plugin>
+
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-gpg-plugin</artifactId>
+						<version>1.6</version>
+						<executions>
+							<execution>
+								<id>sign-artifacts</id>
+								<goals>
+									<goal>sign</goal>
+								</goals>
+								<configuration>
+									<keyname>software@globalmentor.com</keyname>
+								</configuration>
 							</execution>
 						</executions>
 					</plugin>
