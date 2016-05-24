@@ -17,7 +17,7 @@
 package io.csar;
 
 /**
- * The Concern Separation Aspect Registrar (Csar) provides access to some concern (usually cross-cutting) that may configured globally or locally to some
+ * The Concern Separation Aspect Registrar (Csar /zɑːr/) provides access to some concern (usually cross-cutting) that may configured globally or locally to some
  * section of the program.
  * <p>
  * A <dfn>concern</dfn> is some implementation of {@link Concern} and represents some concern such as logging or internationalization. Csar supports associating
