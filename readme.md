@@ -7,3 +7,7 @@ Csar supports concerns to be configured for some local part of the program by as
 For an example of the "relatively difficult problem" Csar was meant to address, see [Logging separation](http://logback.qos.ch/manual/loggingSeparation.html) ([Logback](http://logback.qos.ch/)).
 
 Csar is available in the Maven Central Repository in group [io.csar](http://search.maven.org/#search|ga|1|g%3A%22io.csar%22).
+
+# Changelog
+
+- 0.5.0: First public release.
