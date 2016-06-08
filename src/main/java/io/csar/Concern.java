@@ -23,8 +23,25 @@ package io.csar;
  * This framework allows concerns to be specified locally via a {@link ConcernedThreadGroup}, or as a global default using
  * {@link Csar#registerDefaultConcern(Concern)}.
  * </p>
+ * <p>
+ * Each type of concern should override {@link #getConcernType()} to return the class (normally an interface) representing a type of concern such as logging or
+ * i18n.
+ * </p>
  * @author Garret Wilson
  * @see Csar
  */
 public interface Concern {
+
+	/**
+	 * Returns the type or classification of concern. By default this is the class with which a concern will be registered in a {@link ConcernRegistry}.
+	 * <p>
+	 * The default implementation returns the class of the current instance.
+	 * </p>
+	 * @return The class representing the type of concern.
+	 * @see ConcernRegistry#registerConcern(Concern)
+	 */
+	public default Class<? extends Concern> getConcernType() {
+		return getClass();
+	}
+
 }

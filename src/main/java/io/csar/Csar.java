@@ -16,6 +16,11 @@
 
 package io.csar;
 
+import java.util.Optional;
+import java.util.stream.Stream;
+
+import javax.annotation.*;
+
 /**
  * The Concern Separation Aspect Registrar (Csar /zɑːr/) provides access to some concern (usually cross-cutting) that may configured globally or locally to some
  * section of the program.
@@ -52,51 +57,61 @@ public class Csar {
 	 * Registers the given concerns as defaults for their respective classes.
 	 * @param concerns The concerns to register as defaults.
 	 */
-	public static void setDefaultConcerns(final Concern... concerns) {
+	public static void setDefaultConcerns(@Nonnull final Concern... concerns) {
 		defaultConcernRegistry.registerConcerns(concerns);
 	}
 
 	/**
-	 * Registers the given concern as default for its class.
-	 * @param <C> The type of concern being set.
+	 * Registers the given concerns as defaults for their respective classes.
+	 * @param concerns The concerns to register as defaults.
+	 */
+	public static void setDefaultConcerns(@Nonnull final Stream<Concern> concerns) {
+		defaultConcernRegistry.registerConcerns(concerns);
+	}
+
+	/**
+	 * Registers the given concern as default for its concern type.
+	 * @param <C> The type of concern being set as the default of its concern type.
+	 * @param <D> The type of concern previously set as the default for its concern type.
 	 * @param concern The concern to register.
-	 * @return The concern previously associated with the same class, or <code>null</code> if there was no previous concern for that class.
+	 * @return The concern previously associated with the same class.
 	 * @throws NullPointerException if the given concern is <code>null</code>.
 	 */
-	public static <C extends Concern> C registerDefaultConcern(final C concern) {
+	public static <C extends Concern, D extends Concern> Optional<D> registerDefaultConcern(@Nonnull final C concern) {
 		return defaultConcernRegistry.registerConcern(concern);
 	}
 
 	/**
 	 * Registers the given concern as default.
-	 * @param <C> The type of concern being set.
-	 * @param concernClass The class with which to associate the concern.
+	 * @param <T> The registration concern type.
+	 * @param <C> The type of concern being registered.
+	 * @param concernType The class with which to associate the concern.
 	 * @param concern The concern to register.
-	 * @return The concern previously associated with the given class, or <code>null</code> if there was no previous concern for that class.
+	 * @return The concern previously associated with the given class.
 	 * @throws NullPointerException if the given concern is <code>null</code>.
 	 */
-	public static <C extends Concern> C registerDefaultConcern(final Class<C> concernClass, final C concern) {
-		return defaultConcernRegistry.registerConcern(concernClass, concern);
+	public static <T extends Concern, C extends T> Optional<T> registerDefaultConcern(@Nonnull final Class<T> concernType, @Nonnull final C concern) {
+		return defaultConcernRegistry.registerConcern(concernType, concern);
 	}
 
 	/**
 	 * Returns the default concern for the given concern type.
-	 * @param <C> The type of concern to retrieve.
-	 * @param concernClass The class of concern to retrieve.
+	 * @param <T> The type of concern to retrieve.
+	 * @param concernType The class of concern to retrieve.
 	 * @return The concern associated with the given class, or <code>null</code> if there was no concern for that class.
 	 */
-	public static <C extends Concern> C getDefaultConcern(final Class<C> concernClass) {
-		return defaultConcernRegistry.getConcern(concernClass);
+	public static <T extends Concern> Optional<T> getDefaultConcern(@Nonnull final Class<T> concernType) {
+		return defaultConcernRegistry.getConcern(concernType);
 	}
 
 	/**
 	 * Unregisters a default concern of the given type. If no concern is associated with the specified type, no action occurs.
-	 * @param <C> The type of concern being removed.
-	 * @param concernClass The class with which the concern is associated.
+	 * @param <T> The type of concern being removed.
+	 * @param concernType The class with which the concern is associated.
 	 * @return The concern previously associated with the given class, or <code>null</code> if there was no previous concern for that class.
 	 */
-	public static <C extends Concern> C unregisterDefaultConcern(final Class<C> concernClass) {
-		return defaultConcernRegistry.unregisterConcern(concernClass);
+	public static <T extends Concern> Optional<T> unregisterDefaultConcern(@Nonnull final Class<T> concernType) {
+		return defaultConcernRegistry.unregisterConcern(concernType);
 	}
 
 	/**
@@ -107,15 +122,15 @@ public class Csar {
 	 * appropriate concern can be found, a {@link ConcernNotFoundException} is thrown.
 	 * </p>
 	 * @param <C> The type of concern to retrieve.
-	 * @param concernClass The class indicating the type of concern to retrieve.
+	 * @param concernType The class indicating the type of concern to retrieve.
 	 * @return The concern of the requested type.
 	 * @throws ConcernNotFoundException if no concern of the requested type could be found.
 	 * @see Concerned#getConcern(Class)
 	 * @see #getDefaultConcern(Class)
 	 * @see Thread#currentThread()
 	 */
-	public static <C extends Concern> C getConcern(final Class<C> concernClass) {
-		return getConcern(Thread.currentThread(), concernClass); //retrieve a concern for the current thread
+	public static @Nonnull <C extends Concern> C getConcern(@Nonnull final Class<C> concernType) {
+		return getConcern(Thread.currentThread(), concernType); //retrieve a concern for the current thread
 	}
 
 	/**
@@ -125,27 +140,24 @@ public class Csar {
 	 * found for the thread, or no such concern is set for the thread group, a default concern is searched for using {@link #getDefaultConcern(Class)}. If no
 	 * appropriate concern can be found, a {@link ConcernNotFoundException} is thrown.
 	 * </p>
-	 * @param <C> The type of concern to retrieve.
+	 * @param <T> The type of concern to retrieve.
 	 * @param thread The thread for which a concern should be retrieved.
-	 * @param concernClass The class indicating the type of concern to retrieve.
+	 * @param concernType The class indicating the type of concern to retrieve.
 	 * @return The concern of the requested type.
 	 * @throws ConcernNotFoundException if no concern of the requested type could be found.
 	 * @see Concerned#getConcern(Class)
 	 * @see #getDefaultConcern(Class)
 	 */
-	protected static <C extends Concern> C getConcern(final Thread thread, final Class<C> concernClass) {
-		C concern = null; //search for a thread-group-local concern
+	protected static @Nonnull <T extends Concern> T getConcern(@Nonnull final Thread thread, @Nonnull final Class<T> concernType) {
+		Optional<T> concern = Optional.empty(); //search for a thread-group-local concern
 		final Concerned concernedThreadGroup = getThreadGroup(thread, Concerned.class); //get the concerned thread group
 		if(concernedThreadGroup != null) { //if we found the concerned thread group
-			concern = concernedThreadGroup.getConcern(concernClass); //ask the concerned thread group for the concern
+			concern = concernedThreadGroup.getConcern(concernType); //ask the concerned thread group for the concern
 		}
-		if(concern == null) { //search for a default concern
-			concern = getDefaultConcern(concernClass); //find a default concern
+		if(!concern.isPresent()) { //search for a default concern (can be improved with Optional.or() in Java 9)
+			concern = getDefaultConcern(concernType); //find a default concern
 		}
-		if(concern == null) { //if no concern could be found
-			throw new ConcernNotFoundException("No local or default concern could be found for concern type " + concernClass.getName());
-		}
-		return concern; //return the concern we found
+		return concern.orElseThrow(() -> new ConcernNotFoundException("No local or default concern could be found for concern type " + concernType.getName()));
 	}
 
 	/**
@@ -159,7 +171,7 @@ public class Csar {
 	 * @return The first thread group of the given type, or <code>null</code> if no thread group of the given type could be found.
 	 * @throws NullPointerException if the given thread and/or thread group class is <code>null</code>.
 	 */
-	private static <TG> TG getThreadGroup(final Thread thread, final Class<TG> threadGroupClass) {
+	private static @Nullable <TG> TG getThreadGroup(@Nonnull final Thread thread, @Nonnull final Class<TG> threadGroupClass) {
 		final ThreadGroup threadGroup = thread.getThreadGroup(); //get the thread's thread group
 		return threadGroup != null ? getThreadGroup(threadGroup, threadGroupClass) : null; //if the thread has a thread group, look for the thread group of the requested type 
 	}
@@ -175,7 +187,7 @@ public class Csar {
 	 * @return The first thread group of the given type, or <code>null</code> if no thread group of the given type could be found.
 	 * @throws NullPointerException if the given thread group and/or thread group class is <code>null</code>.
 	 */
-	private static <TG> TG getThreadGroup(ThreadGroup threadGroup, final Class<TG> threadGroupClass) {
+	private static @Nullable <TG> TG getThreadGroup(@Nonnull ThreadGroup threadGroup, @Nonnull final Class<TG> threadGroupClass) {
 		do {
 			if(threadGroupClass.isInstance(threadGroup)) { //if this is the required thread group type
 				return threadGroupClass.cast(threadGroup); //return the thread group as the type

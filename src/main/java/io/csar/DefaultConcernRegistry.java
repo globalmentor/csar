@@ -16,9 +16,7 @@
 
 package io.csar;
 
-import static java.util.Objects.*;
-
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -28,37 +26,31 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class DefaultConcernRegistry implements ConcernRegistry {
 
-	/** The map of concerns keyed to their types. */
-	private final Map<Class<? extends Concern>, Concern> concerns = new ConcurrentHashMap<Class<? extends Concern>, Concern>();
+	/**
+	 * The map of concerns keyed to their types.
+	 * <p>
+	 * Values are stored as {@link Optional} instances to prevent wrapping overhead during lookup.
+	 * </p>
+	 */
+	private final Map<Class<? extends Concern>, Optional<Concern>> concerns = new ConcurrentHashMap<Class<? extends Concern>, Optional<Concern>>();
 
 	@Override
-	public final void registerConcerns(final Concern... concerns) {
-		for(final Concern concern : concerns) {
-			registerConcern(concern);
-		}
+	@SuppressWarnings("unchecked")
+	public final <T extends Concern, C extends T> Optional<T> registerConcern(final Class<T> concernType, final C concern) {
+		final Optional<T> oldValue = (Optional<T>)concerns.put(concernType, Optional.of(concernType.cast(concern)));
+		return oldValue != null ? oldValue : Optional.empty();
 	}
 
 	@Override
 	@SuppressWarnings("unchecked")
-	public final <C extends Concern> C registerConcern(final C concern) {
-		return registerConcern((Class<C>)concern.getClass(), concern);
+	public <T extends Concern> Optional<T> getConcern(final Class<T> concernType) {
+		return (Optional<T>)concerns.getOrDefault(concernType, Optional.empty());
 	}
 
 	@Override
 	@SuppressWarnings("unchecked")
-	public final <C extends Concern> C registerConcern(final Class<C> concernClass, final C concern) {
-		return (C)concerns.put(concernClass, requireNonNull(concern, "Concern cannot be null."));
-	}
-
-	@Override
-	@SuppressWarnings("unchecked")
-	public <C extends Concern> C getConcern(final Class<C> concernClass) {
-		return (C)concerns.get(concernClass);
-	}
-
-	@Override
-	@SuppressWarnings("unchecked")
-	public <C extends Concern> C unregisterConcern(final Class<C> concernClass) {
-		return (C)concerns.remove(concernClass);
+	public <T extends Concern> Optional<T> unregisterConcern(final Class<T> concernType) {
+		final Optional<T> oldValue = (Optional<T>)concerns.remove(concernType);
+		return oldValue != null ? oldValue : Optional.empty();
 	}
 }

@@ -16,6 +16,10 @@
 
 package io.csar;
 
+import java.util.Optional;
+
+import javax.annotation.Nonnull;
+
 /**
  * An object that can retrieve <a href="https://en.wikipedia.org/wiki/Concern_%28computer_science%29">concerns</a>s.
  * @author Garret Wilson
@@ -26,10 +30,10 @@ public interface Concerned {
 
 	/**
 	 * Returns the concern for the given concern type.
-	 * @param <C> The type of concern to retrieve.
+	 * @param <T> The type of concern to retrieve.
 	 * @param concernClass The class of concern to retrieve.
-	 * @return The concern associated with the given class, or <code>null</code> if there was no concern for that class.
+	 * @return The concern associated with the given class.
 	 */
-	public <C extends Concern> C getConcern(final Class<C> concernClass);
+	public <T extends Concern> Optional<T> getConcern(@Nonnull final Class<T> concernClass);
 
 }

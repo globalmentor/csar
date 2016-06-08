@@ -18,6 +18,8 @@ package io.csar;
 
 import static java.util.Objects.*;
 
+import java.util.Optional;
+
 /**
  * A thread group that allows the retrieval of a concern on a per-thread-group basis. This implementation decorates an existing concerned object.
  * @author Garret Wilson
@@ -64,7 +66,7 @@ public class ConcernedThreadGroup extends ThreadGroup implements Concerned {
 	}
 
 	@Override
-	public <C extends Concern> C getConcern(final Class<C> concernClass) {
+	public <T extends Concern> Optional<T> getConcern(final Class<T> concernClass) {
 		return getConcerned().getConcern(concernClass);
 	}
 

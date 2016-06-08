@@ -16,6 +16,9 @@
 
 package io.csar;
 
+import java.util.Optional;
+import java.util.stream.Stream;
+
 /**
  * A thread group that allows the setting and retrieval of a concern on a per-thread-group basis.
  * @author Garret Wilson
@@ -96,17 +99,22 @@ public class ConcernRegistryThreadGroup extends ConcernedThreadGroup implements 
 	}
 
 	@Override
-	public <C extends Concern> C registerConcern(final C concern) {
+	public void registerConcerns(Stream<Concern> concerns) {
+		getConcerned().registerConcerns(concerns);
+	}
+
+	@Override
+	public <C extends Concern, D extends Concern> Optional<D> registerConcern(final C concern) {
 		return getConcerned().registerConcern(concern);
 	}
 
 	@Override
-	public <C extends Concern> C registerConcern(final Class<C> concernClass, final C concern) {
-		return getConcerned().registerConcern(concernClass, concern);
+	public <T extends Concern, C extends T> Optional<T> registerConcern(final Class<T> concernType, final C concern) {
+		return getConcerned().registerConcern(concernType, concern);
 	}
 
 	@Override
-	public <C extends Concern> C unregisterConcern(final Class<C> concernClass) {
-		return getConcerned().unregisterConcern(concernClass);
+	public <T extends Concern> Optional<T> unregisterConcern(final Class<T> concernType) {
+		return getConcerned().unregisterConcern(concernType);
 	}
 }

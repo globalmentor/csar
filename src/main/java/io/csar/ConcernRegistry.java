@@ -16,6 +16,11 @@
 
 package io.csar;
 
+import java.util.Optional;
+import java.util.stream.Stream;
+
+import javax.annotation.Nonnull;
+
 /**
  * A registry of concerns.
  * @author Garret Wilson
@@ -24,36 +29,61 @@ package io.csar;
 public interface ConcernRegistry extends Concerned {
 
 	/**
-	 * Registers the given concerns, associating them with their respective classes.
-	 * @param concerns The concerns to set.
+	 * Registers the given concerns, associating them with their respective concern types.
+	 * @param concerns The concerns to register.
+	 * @see #registerConcern(Concern)
 	 */
-	public void registerConcerns(final Concern... concerns);
+	public default void registerConcerns(@Nonnull final Concern... concerns) {
+		registerConcerns(Stream.of(concerns));
+	}
 
 	/**
-	 * Registers the given concern, associating it with its class.
-	 * @param <C> The type of concern being registered.
-	 * @param concern The concern to register.
-	 * @return The concern previously associated with the same class, or <code>null</code> if there was no previous concern for that class.
-	 * @throws NullPointerException if the given concern is <code>null</code>.
+	 * Registers the given concerns, associating them with their respective concern types.
+	 * @param concerns The concerns to register.
+	 * @see #registerConcern(Concern)
 	 */
-	public <C extends Concern> C registerConcern(final C concern);
+	public default void registerConcerns(@Nonnull final Stream<Concern> concerns) {
+		concerns.forEach(this::registerConcern);
+	}
+
+	/**
+	 * Registers the given concern, associating it with its concern type.
+	 * <p>
+	 * The default implementation delegates to {@link #registerConcern(Class, Concern)}.
+	 * </p>
+	 * @param <C> The type of concern being registered.
+	 * @param <D> The type of concern previously registered.
+	 * @param concern The concern to register.
+	 * @return The concern previously associated with the same concern type.
+	 * @throws NullPointerException if the given concern is <code>null</code>.
+	 * @throws ClassCastException if the concern to be registered is not an instance of its own {@link Concern#getConcernType()}.
+	 * @see Concern#getConcernType()
+	 * @see #registerConcern(Class, Concern)
+	 */
+	public default <C extends Concern, D extends Concern> Optional<D> registerConcern(@Nonnull final C concern) {
+		@SuppressWarnings("unchecked")
+		final Class<D> concernType = (Class<D>)concern.getConcernType(); //this is technically incorrect, but it gives us a temporary generic type to use
+		return registerConcern(concernType, concernType.cast(concern));
+	}
 
 	/**
 	 * Registers the given concern.
+	 * @param <T> The registration concern type.
 	 * @param <C> The type of concern being registered.
-	 * @param concernClass The class with which to associate the concern.
+	 * @param concernType The class with which to associate the concern.
 	 * @param concern The concern to register.
-	 * @return The concern previously associated with the given class, or <code>null</code> if there was no previous concern for that class.
+	 * @return The concern previously associated with the given class.
 	 * @throws NullPointerException if the given concern is <code>null</code>.
+	 * @throws ClassCastException if the concern to be registered is not an instance of the given concern type.
 	 */
-	public <C extends Concern> C registerConcern(final Class<C> concernClass, final C concern);
+	public <T extends Concern, C extends T> Optional<T> registerConcern(@Nonnull final Class<T> concernType, @Nonnull final C concern);
 
 	/**
 	 * Unregisters a concern of the given type. If no concern is associated with the specified type, no action occurs.
-	 * @param <C> The type of concern being unregistered.
-	 * @param concernClass The class with which the concern is associated.
-	 * @return The concern previously associated with the given class, or <code>null</code> if there was no previous concern for that class.
+	 * @param <T> The type of concern being unregistered.
+	 * @param concernType The class with which the concern is associated.
+	 * @return The concern previously associated with the given class.
 	 */
-	public <C extends Concern> C unregisterConcern(final Class<C> concernClass);
+	public <T extends Concern> Optional<T> unregisterConcern(@Nonnull final Class<T> concernType);
 
 }
