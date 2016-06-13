@@ -17,6 +17,7 @@
 package io.csar;
 
 import java.util.Optional;
+import java.util.ServiceLoader;
 import java.util.stream.Stream;
 
 import javax.annotation.*;
@@ -31,7 +32,7 @@ import javax.annotation.*;
  * provided to requesting threads.
  * </p>
  * <p>
- * A concern can be made local by registering it with a thread group that is {@link Concerned}, such as {@link ConcernRegistryThreadGroup} , and creating a
+ * A concern can be made local by registering it with a thread group that is {@link Concerned}, such as {@link ConcernRegistryThreadGroup}, and creating a
  * {@link Thread} using one of the thread's constructors that specify a {@link ThreadGroup}. All threads that run in the thread group will have access to the
  * concern by calling {@link Csar#getConcern(Class)}, specifying the class of the {@link Concern} implementation. The concern registered with the
  * {@link Concerned} thread group will be returned. A concern can thus be restricted to specific areas of the program.
@@ -39,6 +40,20 @@ import javax.annotation.*;
  * <p>
  * If no thread group is found that implements the concern type, a global default concern is searched for by using {@link Csar#getDefaultConcern(Class)}. If no
  * local or global concern of the requested type is found, a {@link ConcernNotFoundException} is thrown.
+ * </p>
+ * <p>
+ * For transparent and automatic installation of default concerns, a particular concern implementation (such as an internationalization package based upon
+ * resource bundles) can implement {@link ConcernProvider}, indicating the the concerns implemented by that library as specified by {@link ServiceLoader}. The
+ * concern library will provide a text file <code>META-INF/services/io.csar.ConcernProvider</code> containing a line indicating the class name of the concern
+ * provider:
+ * </p>
+ * 
+ * <pre>
+ * <code>com.example.FooConcernProvider</code>
+ * </pre>
+ * <p>
+ * When Csar is first loaded, it will ask all registered concern providers for their concerns and register them as default concern providers for the concern
+ * type indicated by the {@link Concern#getConcernType()} indicated by each.
  * </p>
  * @author Garret Wilson
  * @see <a href="https://en.wikipedia.org/wiki/Concern_%28computer_science%29">Concern (computer science)</a>
@@ -48,6 +63,13 @@ public class Csar {
 
 	/** The registry of fallback concerns. */
 	private static final ConcernRegistry defaultConcernRegistry = new DefaultConcernRegistry();
+
+	/** Install concerns in the default concern registry. */
+	static {
+		for(final ConcernProvider concernProvider : ServiceLoader.load(ConcernProvider.class)) {
+			setDefaultConcerns(concernProvider.concerns());
+		}
+	}
 
 	/** This class cannot be publicly instantiated. */
 	private Csar() {
