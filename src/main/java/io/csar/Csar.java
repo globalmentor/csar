@@ -137,21 +137,19 @@ public class Csar {
 	}
 
 	/**
-	 * Retrieves the concern of the given type for the current thread.
+	 * Retrieves an optional concern of the given type for the current thread.
 	 * <p>
 	 * A local concern is first searched for using the first {@link Concerned} thread group, if any, of the current thread. If no {@link Concerned} thread group
-	 * is found for the thread, or no such concern is set for the thread group, a default concern is searched for using {@link #getDefaultConcern(Class)}. If no
-	 * appropriate concern can be found, a {@link ConcernNotFoundException} is thrown.
+	 * is found for the thread, or no such concern is set for the thread group, a default concern is searched for using {@link #getDefaultConcern(Class)}.
 	 * </p>
 	 * @param <C> The type of concern to retrieve.
 	 * @param concernType The class indicating the type of concern to retrieve.
 	 * @return The concern of the requested type.
-	 * @throws ConcernNotFoundException if no concern of the requested type could be found.
 	 * @see Concerned#getConcern(Class)
 	 * @see #getDefaultConcern(Class)
 	 * @see Thread#currentThread()
 	 */
-	public static @Nonnull <C extends Concern> C getConcern(@Nonnull final Class<C> concernType) {
+	public static <C extends Concern> Optional<C> getConcern(@Nonnull final Class<C> concernType) {
 		return getConcern(Thread.currentThread(), concernType); //retrieve a concern for the current thread
 	}
 
@@ -170,7 +168,7 @@ public class Csar {
 	 * @see Concerned#getConcern(Class)
 	 * @see #getDefaultConcern(Class)
 	 */
-	protected static @Nonnull <T extends Concern> T getConcern(@Nonnull final Thread thread, @Nonnull final Class<T> concernType) {
+	protected static <T extends Concern> Optional<T> getConcern(@Nonnull final Thread thread, @Nonnull final Class<T> concernType) {
 		Optional<T> concern = Optional.empty(); //search for a thread-group-local concern
 		final Concerned concernedThreadGroup = getThreadGroup(thread, Concerned.class); //get the concerned thread group
 		if(concernedThreadGroup != null) { //if we found the concerned thread group
@@ -179,7 +177,7 @@ public class Csar {
 		if(!concern.isPresent()) { //search for a default concern (can be improved with Optional.or() in Java 9)
 			concern = getDefaultConcern(concernType); //find a default concern
 		}
-		return concern.orElseThrow(() -> new ConcernNotFoundException("No local or default concern could be found for concern type " + concernType.getName()));
+		return concern;
 	}
 
 	/**
