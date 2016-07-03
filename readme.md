@@ -9,12 +9,16 @@ For an example of the "relatively difficult problem" Csar was meant to address, 
 ## Concern Providers
 
 - Internationalization: [Rincl](http://rincl.io)
+- Logging: [Clogr](http://clogr.io/)
 - Dependency Injection
-- Logging
 
 ## Download
 
 Csar is available in the Maven Central Repository in group [io.csar](http://search.maven.org/#search|ga|1|g%3A%22io.csar%22).
+
+## Issues
+
+Issues tracked by [JIRA](https://globalmentor.atlassian.net/browse/CSAR).
 
 ## Changelog
 
