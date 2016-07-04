@@ -24,7 +24,7 @@ import java.util.stream.Stream;
  * @author Garret Wilson
  * @see Csar
  */
-public class ConcernRegistryThreadGroup extends ConcernedThreadGroup implements ConcernRegistry {
+public class ConcernRegistryThreadGroup extends DecoratedConcernedThreadGroup implements ConcernRegistry {
 
 	@Override
 	protected ConcernRegistry getConcerned() {

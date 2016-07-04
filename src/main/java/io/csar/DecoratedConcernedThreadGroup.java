@@ -25,7 +25,7 @@ import java.util.Optional;
  * @author Garret Wilson
  * @see Csar
  */
-public class ConcernedThreadGroup extends ThreadGroup implements Concerned {
+public class DecoratedConcernedThreadGroup extends ThreadGroup implements Concerned {
 
 	/** The implementation for managing concerns for this thread group. */
 	private final Concerned concerned;
@@ -45,7 +45,7 @@ public class ConcernedThreadGroup extends ThreadGroup implements Concerned {
 	 * @see ThreadGroup#checkAccess()
 	 * @see ConcernRegistry#registerConcern(Concern)
 	 */
-	public ConcernedThreadGroup(final String name, final Concerned concerned) {
+	public DecoratedConcernedThreadGroup(final String name, final Concerned concerned) {
 		this(Thread.currentThread().getThreadGroup(), name, concerned);
 	}
 
@@ -60,7 +60,7 @@ public class ConcernedThreadGroup extends ThreadGroup implements Concerned {
 	 * @see ThreadGroup#checkAccess()
 	 * @see ConcernRegistry#registerConcern(Concern)
 	 */
-	public ConcernedThreadGroup(final ThreadGroup parent, final String name, final Concerned concerned) {
+	public DecoratedConcernedThreadGroup(final ThreadGroup parent, final String name, final Concerned concerned) {
 		super(parent, name);
 		this.concerned = requireNonNull(concerned, "Concerned implementation cannot be null.");
 	}
