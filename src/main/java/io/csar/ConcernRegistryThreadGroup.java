@@ -21,6 +21,9 @@ import java.util.stream.Stream;
 
 /**
  * A thread group that allows the setting and retrieval of a concern on a per-thread-group basis.
+ * <p>
+ * This implementation decorates an existing concern registry.
+ * </p>
  * @author Garret Wilson
  * @see Csar
  */

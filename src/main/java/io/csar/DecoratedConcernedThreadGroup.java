@@ -21,7 +21,7 @@ import static java.util.Objects.*;
 import java.util.Optional;
 
 /**
- * A thread group that allows the retrieval of a concern on a per-thread-group basis. This implementation decorates an existing concerned object.
+ * A thread group that allows the retrieval of a concern on a per-thread-group basis by decorating an existing concerned object.
  * @author Garret Wilson
  * @see Csar
  */
@@ -41,7 +41,6 @@ public class DecoratedConcernedThreadGroup extends ThreadGroup implements Concer
 	 * @param concerned The implementation for retrieving concerns for this thread group.
 	 * @throws NullPointerException if the given concerned is <code>null</code>.
 	 * @throws SecurityException If the current thread cannot create a thread in the specified thread group.
-	 * @see SecurityException
 	 * @see ThreadGroup#checkAccess()
 	 * @see ConcernRegistry#registerConcern(Concern)
 	 */
@@ -56,7 +55,6 @@ public class DecoratedConcernedThreadGroup extends ThreadGroup implements Concer
 	 * @param concerned The implementation for retrieving concerns for this thread group.
 	 * @throws NullPointerException if the given parent and/or concerned is <code>null</code>.
 	 * @throws SecurityException If the current thread cannot create a thread in the specified thread group.
-	 * @see SecurityException
 	 * @see ThreadGroup#checkAccess()
 	 * @see ConcernRegistry#registerConcern(Concern)
 	 */

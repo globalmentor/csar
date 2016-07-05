@@ -16,8 +16,11 @@
 
 package io.csar;
 
-import java.util.Optional;
-import java.util.ServiceLoader;
+import static java.lang.String.*;
+
+import java.util.*;
+import java.util.concurrent.atomic.AtomicLong;
+import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 import javax.annotation.*;
@@ -137,6 +140,28 @@ public class Csar {
 	}
 
 	/**
+	 * Retrieves a concern of the given type for the current thread.
+	 * <p>
+	 * A local concern is first searched for using the first {@link Concerned} thread group, if any, of the current thread. If no {@link Concerned} thread group
+	 * is found for the thread, or no such concern is set for the thread group, a default concern is searched for using {@link #getDefaultConcern(Class)}.
+	 * </p>
+	 * <p>
+	 * If no appropriate concern can be found, a {@link ConcernNotFoundException} is thrown.
+	 * </p>
+	 * @param <C> The type of concern to retrieve.
+	 * @param concernType The class indicating the type of concern to retrieve.
+	 * @return The concern of the requested type.
+	 * @throws ConcernNotFoundException if no concern of the requested type could be found.
+	 * @see Concerned#getConcern(Class)
+	 * @see #getDefaultConcern(Class)
+	 * @see Thread#currentThread()
+	 */
+	public static <C extends Concern> C getConcern(@Nonnull final Class<C> concernType) throws ConcernNotFoundException {
+		return getOptionalConcern(concernType).orElseThrow(
+				() -> new ConcernNotFoundException(format("No local or default concern could be found for concern type %s.", concernType.getSimpleName())));
+	}
+
+	/**
 	 * Retrieves an optional concern of the given type for the current thread.
 	 * <p>
 	 * A local concern is first searched for using the first {@link Concerned} thread group, if any, of the current thread. If no {@link Concerned} thread group
@@ -149,7 +174,7 @@ public class Csar {
 	 * @see #getDefaultConcern(Class)
 	 * @see Thread#currentThread()
 	 */
-	public static <C extends Concern> Optional<C> getConcern(@Nonnull final Class<C> concernType) {
+	public static <C extends Concern> Optional<C> getOptionalConcern(@Nonnull final Class<C> concernType) {
 		return getConcern(Thread.currentThread(), concernType); //retrieve a concern for the current thread
 	}
 
@@ -215,6 +240,192 @@ public class Csar {
 			threadGroup = threadGroup.getParent(); //check this thread group's parent thread group
 		} while(threadGroup != null); //stop looking if we run out of thread groups
 		return null; //we were unable to find the required thread group
+	}
+
+	/** Supplies unique, sequential names for new thread groups. */
+	private final static Supplier<String> THREAD_GROUP_NAME_SUPPLIER = new Supplier<String>() {
+		private final String prefix = Csar.class.getSimpleName() + ThreadGroup.class.getSimpleName() + '-';
+		private final AtomicLong sequenceNumber = new AtomicLong(1);
+
+		@Override
+		public String get() {
+			return prefix + Long.toUnsignedString(sequenceNumber.getAndIncrement());
+		}
+	};
+
+	/** Supplies unique, sequential names for new threads. */
+	private final static Supplier<String> THREAD_NAME_SUPPLIER = new Supplier<String>() {
+		private final String prefix = Csar.class.getSimpleName() + Thread.class.getSimpleName() + '-';
+		private final AtomicLong sequenceNumber = new AtomicLong(1);
+
+		@Override
+		public String get() {
+			return prefix + Long.toUnsignedString(sequenceNumber.getAndIncrement());
+		}
+	};
+
+	/**
+	 * Executes a runnable in a separate thread, providing the given concern to the thread via a new concerned thread group. The returned thread will already be
+	 * started.
+	 * <p>
+	 * The concern will be accessible to the new thread using {@link Csar#getConcern(Class)} using the type returned by {@link Concern#getConcernType()}.
+	 * </p>
+	 * <p>
+	 * To wait for the operation to complete, simply call one of the {@link Thread#join()} methods on the returned thread.
+	 * </p>
+	 * @param concern The concern to be available to the new thread via a new thread group.
+	 * @param runnable The runnable to run in the thread.
+	 * @return The thread executing the given runnable operation in the context of the given concern.
+	 * @throws NullPointerException if the given concern and/or runnable is <code>null</code>.
+	 * @throws SecurityException If the current thread cannot create a thread in the specified thread group.
+	 * @see ThreadGroup#checkAccess()
+	 * @see ConcernedThreadGroup
+	 * @see #createThread(String, Stream, Runnable)
+	 */
+	public static Thread run(@Nonnull final Concern concern, @Nonnull final Runnable runnable) {
+		return run(THREAD_NAME_SUPPLIER.get(), Stream.of(concern), runnable);
+	}
+
+	/**
+	 * Executes a runnable in a separate thread, providing the given concerns to the thread via a new concerned thread group. The returned thread will already be
+	 * started.
+	 * <p>
+	 * The concerns will be accessible to the new thread using {@link Csar#getConcern(Class)}. If more than one concern provided here has the same type returned
+	 * by {@link Concern#getConcernType()}, the latter concern has priority.
+	 * </p>
+	 * <p>
+	 * To wait for the operation to complete, simply call one of the {@link Thread#join()} methods on the returned thread.
+	 * </p>
+	 * @param runnable The runnable to run in the thread.
+	 * @param concerns The concerns to be available to the new thread via a new thread group.
+	 * @return The thread executing the given runnable operation in the context of the given concerns.
+	 * @throws NullPointerException if the given runnable and/or concerns is <code>null</code>.
+	 * @throws SecurityException If the current thread cannot create a thread in the specified thread group.
+	 * @see ThreadGroup#checkAccess()
+	 * @see ConcernedThreadGroup
+	 * @see #createThread(String, Stream, Runnable)
+	 */
+	public static Thread run(@Nonnull final Runnable runnable, @Nonnull final Concern... concerns) {
+		return run(THREAD_NAME_SUPPLIER.get(), Stream.of(concerns), runnable);
+	}
+
+	/**
+	 * Executes a runnable in a separate thread, providing the given concerns to the thread via a new concerned thread group. The returned thread will already be
+	 * started.
+	 * <p>
+	 * The concerns will be accessible to the new thread using {@link Csar#getConcern(Class)}. If more than one concern provided here has the same type returned
+	 * by {@link Concern#getConcernType()}, the latter concern has priority.
+	 * </p>
+	 * <p>
+	 * To wait for the operation to complete, simply call one of the {@link Thread#join()} methods on the returned thread.
+	 * </p>
+	 * @param concerns The concerns to be available to the new thread via a new thread group.
+	 * @param runnable The runnable to run in the thread.
+	 * @return The thread executing the given runnable operation in the context of the given concerns.
+	 * @throws NullPointerException if the given concerns and/or runnable is <code>null</code>.
+	 * @throws SecurityException If the current thread cannot create a thread in the specified thread group.
+	 * @see ThreadGroup#checkAccess()
+	 * @see ConcernedThreadGroup
+	 * @see #createThread(String, Stream, Runnable)
+	 */
+	public static Thread run(@Nonnull final Stream<Concern> concerns, @Nonnull final Runnable runnable) {
+		return run(THREAD_NAME_SUPPLIER.get(), concerns, runnable);
+	}
+
+	/**
+	 * Executes a runnable in a separate thread, providing the given concern to the thread via a new concerned thread group. The returned thread will already be
+	 * started.
+	 * <p>
+	 * The concern will be accessible to the new thread using {@link Csar#getConcern(Class)} using the type returned by {@link Concern#getConcernType()}.
+	 * </p>
+	 * <p>
+	 * To wait for the operation to complete, simply call one of the {@link Thread#join()} methods on the returned thread.
+	 * </p>
+	 * @param threadName The name of the thread to create.
+	 * @param concern The concern to be available to the new thread via a new thread group.
+	 * @param runnable The runnable to run in the thread.
+	 * @return The thread executing the given runnable operation in the context of the given concern.
+	 * @throws NullPointerException if the given thread name, concern, and/or runnable is <code>null</code>.
+	 * @throws SecurityException If the current thread cannot create a thread in the specified thread group.
+	 * @see ThreadGroup#checkAccess()
+	 * @see ConcernedThreadGroup
+	 * @see #createThread(String, Stream, Runnable)
+	 */
+	public static Thread run(@Nonnull final String threadName, @Nonnull final Concern concern, @Nonnull final Runnable runnable) {
+		return run(threadName, Stream.of(concern), runnable);
+	}
+
+	/**
+	 * Executes a runnable in a separate thread, providing the given concerns to the thread via a new concerned thread group. The returned thread will already be
+	 * started.
+	 * <p>
+	 * The concerns will be accessible to the new thread using {@link Csar#getConcern(Class)}. If more than one concern provided here has the same type returned
+	 * by {@link Concern#getConcernType()}, the latter concern has priority.
+	 * </p>
+	 * <p>
+	 * To wait for the operation to complete, simply call one of the {@link Thread#join()} methods on the returned thread.
+	 * </p>
+	 * @param threadName The name of the thread to create.
+	 * @param runnable The runnable to run in the thread.
+	 * @param concerns The concerns to be available to the new thread via a new thread group.
+	 * @return The thread executing the given runnable operation in the context of the given concerns.
+	 * @throws NullPointerException if the given thread name, runnable, and/or concerns is <code>null</code>.
+	 * @throws SecurityException If the current thread cannot create a thread in the specified thread group.
+	 * @see ThreadGroup#checkAccess()
+	 * @see ConcernedThreadGroup
+	 * @see #createThread(String, Stream, Runnable)
+	 */
+	public static Thread run(@Nonnull final String threadName, @Nonnull final Runnable runnable, @Nonnull final Concern... concerns) {
+		return run(threadName, Stream.of(concerns), runnable);
+	}
+
+	/**
+	 * Executes a runnable in a separate thread, providing the given concerns to the thread via a new concerned thread group. The returned thread will already be
+	 * started.
+	 * <p>
+	 * The concerns will be accessible to the new thread using {@link Csar#getConcern(Class)}. If more than one concern provided here has the same type returned
+	 * by {@link Concern#getConcernType()}, the latter concern has priority.
+	 * </p>
+	 * <p>
+	 * To wait for the operation to complete, simply call one of the {@link Thread#join()} methods on the returned thread.
+	 * </p>
+	 * @param threadName The name of the thread to create.
+	 * @param concerns The concerns to be available to the new thread via a new thread group.
+	 * @param runnable The runnable to run in the thread.
+	 * @return The thread executing the given runnable operation in the context of the given concerns.
+	 * @throws NullPointerException if the given thread name, concerns, and/or runnable is <code>null</code>.
+	 * @throws SecurityException If the current thread cannot create a thread in the specified thread group.
+	 * @see ThreadGroup#checkAccess()
+	 * @see ConcernedThreadGroup
+	 * @see #createThread(String, Stream, Runnable)
+	 */
+	public static Thread run(@Nonnull final String threadName, @Nonnull final Stream<Concern> concerns, @Nonnull final Runnable runnable) {
+		final Thread thread = createThread(threadName, concerns, runnable);
+		thread.start();
+		return thread;
+	}
+
+	/**
+	 * Creates a separate thread providing the given concerns via a new concerned thread group. The new thread is not started.
+	 * <p>
+	 * The concerns will be accessible to the new thread using {@link Csar#getConcern(Class)}. If more than one concern provided here has the same type returned
+	 * by {@link Concern#getConcernType()}, the latter concern has priority.
+	 * </p>
+	 * <p>
+	 * To wait for the operation to complete, simply call one of the {@link Thread#join()} methods on the returned thread.
+	 * </p>
+	 * @param threadName The name of the thread to create.
+	 * @param concerns The concerns to be available to the new thread via a new thread group.
+	 * @param runnable The runnable to run in the thread.
+	 * @return A thread for executing the given runnable operation in the context of the given concerns.
+	 * @throws NullPointerException if the given thread name, concerns, and/or runnable is <code>null</code>.
+	 * @throws SecurityException If the current thread cannot create a thread in the specified thread group.
+	 * @see ThreadGroup#checkAccess()
+	 * @see ConcernedThreadGroup
+	 */
+	public static Thread createThread(@Nonnull final String threadName, @Nonnull final Stream<Concern> concerns, @Nonnull final Runnable runnable) {
+		final ConcernedThreadGroup concernedThreadGroup = new ConcernedThreadGroup(THREAD_GROUP_NAME_SUPPLIER.get(), concerns);
+		return new Thread(concernedThreadGroup, runnable, threadName);
 	}
 
 }

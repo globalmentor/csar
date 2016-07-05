@@ -22,5 +22,7 @@ Issues tracked by [JIRA](https://globalmentor.atlassian.net/browse/CSAR).
 
 ## Changelog
 
+- 0.7.0:
+	* [RINCL-1](https://globalmentor.atlassian.net/browse/CSAR-1): An easy way to create concerned thread groups.
 - 0.6.0: Added concern provider mechanism.
 - 0.5.0: First public release.
