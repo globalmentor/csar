@@ -51,8 +51,41 @@ public class ConcernedThreadGroup extends ThreadGroup implements Concerned {
 	 * @throws SecurityException If the current thread cannot create a thread in the specified thread group.
 	 * @see ThreadGroup#checkAccess()
 	 */
+	public ConcernedThreadGroup(@Nonnull final String name, @Nonnull final Concern... concerns) {
+		this(name, Stream.of(concerns));
+	}
+
+	/**
+	 * Thread group name and and concerns constructor. The current thread's thread group will be used as the parent.
+	 * <p>
+	 * The concerns will be accessible using {@link #getConcern(Class)} using the {@link Concern#getConcernType()} of each concern. If more than one concern has
+	 * the same type, the latter concern has priority.
+	 * </p>
+	 * @param name The name of the new thread group.
+	 * @param concerns The concerns to be retrievable from the thread group.
+	 * @throws NullPointerException if the given name and/or concerns is <code>null</code>.
+	 * @throws SecurityException If the current thread cannot create a thread in the specified thread group.
+	 * @see ThreadGroup#checkAccess()
+	 */
 	public ConcernedThreadGroup(@Nonnull final String name, @Nonnull final Stream<Concern> concerns) {
 		this(Thread.currentThread().getThreadGroup(), name, concerns);
+	}
+
+	/**
+	 * Thread group parent, thread group name, and concerns constructor.
+	 * <p>
+	 * The concerns will be accessible using {@link #getConcern(Class)} using the {@link Concern#getConcernType()} of each concern. If more than one concern has
+	 * the same type, the latter concern has priority.
+	 * </p>
+	 * @param parent The parent thread group.
+	 * @param name The name of the new thread group.
+	 * @param concerns The concerns to be retrievable from the thread group.
+	 * @throws NullPointerException if the given parent thread group, name, and/or concerns is <code>null</code>.
+	 * @throws SecurityException If the current thread cannot create a thread in the specified thread group.
+	 * @see ThreadGroup#checkAccess()
+	 */
+	public ConcernedThreadGroup(@Nonnull final ThreadGroup parent, @Nonnull final String name, @Nonnull final Concern... concerns) {
+		this(parent, name, Stream.of(concerns));
 	}
 
 	/**
