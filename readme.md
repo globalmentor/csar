@@ -18,7 +18,7 @@ Csar is available in the Maven Central Repository in group [io.csar](http://sear
 
 ## Issues
 
-Issues tracked by [JIRA](https://globalmentor.atlassian.net/browse/CSAR).
+Issues tracked by [JIRA](https://globalmentor.atlassian.net/projects/CSAR).
 
 ## Changelog
 
