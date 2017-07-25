@@ -10,7 +10,7 @@
 
 	<name>Concern Separation Aspect Registrar (Csar)</name>
 	<description>Csar (/zɑːr/) provides access to concerns (usually cross-cutting) configured globally or locally.</description>
-	<url>http://csar.io/</url>
+	<url>https://csar.io/</url>
 	<inceptionYear>2009</inceptionYear>
 
 	<licenses>
