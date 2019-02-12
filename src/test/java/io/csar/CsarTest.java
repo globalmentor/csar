@@ -16,21 +16,20 @@
 
 package io.csar;
 
-import static org.junit.Assert.*;
+import static org.hamcrest.MatcherAssert.*;
 import static org.hamcrest.Matchers.*;
 
 import java.util.Properties;
 import java.util.concurrent.atomic.AtomicReference;
 
-import org.junit.*;
+import org.junit.jupiter.api.*;
 
 import io.csar.Csar;
 
 /**
- * Tests of {@link Rincl}.
+ * Tests of {@link Csar}.
  * @author Garret Wilson
  */
-
 public class CsarTest {
 
 	/**

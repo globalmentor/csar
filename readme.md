@@ -14,7 +14,7 @@ For an example of the "relatively difficult problem" Csar was meant to address, 
 
 ## Download
 
-Csar is available in the Maven Central Repository in group [io.csar](https://search.maven.org/#search|ga|1|g%3A%22io.csar%22).
+Csar is available in the Maven Central Repository in group [io.csar](https://search.maven.org/search?q=g:io.csar).
 
 ## Issues
 
