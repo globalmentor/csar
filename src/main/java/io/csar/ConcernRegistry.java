@@ -48,9 +48,7 @@ public interface ConcernRegistry extends Concerned {
 
 	/**
 	 * Registers the given concern, associating it with its concern type.
-	 * <p>
-	 * The default implementation delegates to {@link #registerConcern(Class, Concern)}.
-	 * </p>
+	 * @implSpec The default implementation delegates to {@link #registerConcern(Class, Concern)}.
 	 * @param <C> The type of concern being registered.
 	 * @param <D> The type of concern previously registered.
 	 * @param concern The concern to register.
