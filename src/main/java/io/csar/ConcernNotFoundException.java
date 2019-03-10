@@ -44,7 +44,7 @@ public class ConcernNotFoundException extends IllegalStateException {
 	 * @param cause The cause error or <code>null</code> if the cause is nonexistent or unknown.
 	 */
 	public ConcernNotFoundException(@Nullable final Throwable cause) {
-		this(null, cause); //construct the class with no message
+		this(cause == null ? null : cause.toString(), cause); //construct the class with no message
 	}
 
 	/**
