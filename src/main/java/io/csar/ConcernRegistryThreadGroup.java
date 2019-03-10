@@ -100,6 +100,11 @@ public class ConcernRegistryThreadGroup extends DecoratedConcernedThreadGroup im
 	}
 
 	@Override
+	public void registerConcerns(Iterable<Concern> concerns) {
+		getConcerned().registerConcerns(concerns);
+	}
+
+	@Override
 	public void registerConcerns(Stream<Concern> concerns) {
 		getConcerned().registerConcerns(concerns);
 	}

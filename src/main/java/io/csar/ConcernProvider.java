@@ -17,13 +17,12 @@
 package io.csar;
 
 import java.util.ServiceLoader;
-import java.util.stream.Stream;
 
 /**
- * A provider of concerns for registration with Csar
+ * A provider of concerns for registration with Csar.
  * <p>
- * When initializing Csar will probe all instances of this class registered as service providers, and register returned {@link #concerns()} in the default Csar
- * {@link ConcernRegistry}.
+ * When initializing Csar will probe all instances of this class registered as service providers, and register concerns returned by{@link #getConcerns()} in the
+ * default Csar {@link ConcernRegistry}.
  * </p>
  * @author Garret Wilson
  * @see ServiceLoader
@@ -31,6 +30,6 @@ import java.util.stream.Stream;
 public interface ConcernProvider {
 
 	/** @return The concern implementations provided for registration. */
-	public Stream<Concern> concerns();
+	public Iterable<Concern> getConcerns();
 
 }

@@ -70,7 +70,7 @@ public class Csar {
 	/** Install concerns in the default concern registry. */
 	static {
 		for(final ConcernProvider concernProvider : ServiceLoader.load(ConcernProvider.class)) {
-			setDefaultConcerns(concernProvider.concerns());
+			setDefaultConcerns(concernProvider.getConcerns());
 		}
 	}
 
@@ -83,6 +83,14 @@ public class Csar {
 	 * @param concerns The concerns to register as defaults.
 	 */
 	public static void setDefaultConcerns(@Nonnull final Concern... concerns) {
+		defaultConcernRegistry.registerConcerns(concerns);
+	}
+
+	/**
+	 * Registers the given concerns as defaults for their respective classes.
+	 * @param concerns The concerns to register as defaults.
+	 */
+	public static void setDefaultConcerns(@Nonnull final Iterable<Concern> concerns) {
 		defaultConcernRegistry.registerConcerns(concerns);
 	}
 
