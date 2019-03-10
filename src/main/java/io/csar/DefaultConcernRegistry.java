@@ -28,9 +28,7 @@ public class DefaultConcernRegistry implements ConcernRegistry {
 
 	/**
 	 * The map of concerns keyed to their types.
-	 * <p>
-	 * Values are stored as {@link Optional} instances to prevent wrapping overhead during lookup.
-	 * </p>
+	 * @implNote Values are stored as {@link Optional} instances to prevent wrapping overhead during lookup.
 	 */
 	private final Map<Class<? extends Concern>, Optional<Concern>> concerns = new ConcurrentHashMap<Class<? extends Concern>, Optional<Concern>>();
 
@@ -43,7 +41,7 @@ public class DefaultConcernRegistry implements ConcernRegistry {
 
 	@Override
 	@SuppressWarnings("unchecked")
-	public <T extends Concern> Optional<T> getConcern(final Class<T> concernType) {
+	public <T extends Concern> Optional<T> findConcern(final Class<T> concernType) {
 		return (Optional<T>)concerns.getOrDefault(concernType, Optional.empty());
 	}
 

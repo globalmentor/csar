@@ -64,8 +64,8 @@ public class DecoratedConcernedThreadGroup extends ThreadGroup implements Concer
 	}
 
 	@Override
-	public <T extends Concern> Optional<T> getConcern(final Class<T> concernClass) {
-		return getConcerned().getConcern(concernClass);
+	public <T extends Concern> Optional<T> findConcern(final Class<T> concernClass) {
+		return getConcerned().findConcern(concernClass);
 	}
 
 }
