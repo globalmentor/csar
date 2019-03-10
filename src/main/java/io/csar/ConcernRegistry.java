@@ -16,9 +16,7 @@
 
 package io.csar;
 
-import static java.util.Arrays.*;
-
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Stream;
 
 import javax.annotation.Nonnull;
@@ -32,12 +30,22 @@ public interface ConcernRegistry extends Concerned {
 
 	/**
 	 * Registers the given concerns, associating them with their respective concern types.
-	 * @implSpec The default implementation delegates to {@link #registerConcerns(Iterable)}.
+	 * @implSpec The default implementation delegates to {@link #registerConcerns(Stream)}.
 	 * @param concerns The concerns to register.
 	 * @see #registerConcern(Concern)
 	 */
 	public default void registerConcerns(@Nonnull final Concern... concerns) {
-		registerConcerns(asList(concerns));
+		registerConcerns(Stream.of(concerns));
+	}
+
+	/**
+	 * Registers the given concerns, associating them with their respective concern types.
+	 * @implSpec The default implementation delegates to {@link #registerConcerns(Stream)}.
+	 * @param concerns The concerns to register.
+	 * @see #registerConcern(Concern)
+	 */
+	public default void registerConcerns(@Nonnull final Collection<Concern> concerns) {
+		registerConcerns(concerns.stream());
 	}
 
 	/**
@@ -46,18 +54,8 @@ public interface ConcernRegistry extends Concerned {
 	 * @param concerns The concerns to register.
 	 * @see #registerConcern(Concern)
 	 */
-	public default void registerConcerns(@Nonnull final Iterable<Concern> concerns) {
-		concerns.forEach(this::registerConcern);
-	}
-
-	/**
-	 * Registers the given concerns, associating them with their respective concern types.
-	 * @implSpec The default implementation delegates to {@link #registerConcerns(Iterable)}.
-	 * @param concerns The concerns to register.
-	 * @see #registerConcern(Concern)
-	 */
 	public default void registerConcerns(@Nonnull final Stream<Concern> concerns) {
-		registerConcerns(concerns::iterator);
+		concerns.forEach(this::registerConcern);
 	}
 
 	/**
