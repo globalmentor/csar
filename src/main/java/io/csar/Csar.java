@@ -90,6 +90,14 @@ public class Csar {
 	 * Registers the given concerns as defaults for their respective classes.
 	 * @param concerns The concerns to register as defaults.
 	 */
+	public static void setDefaultConcerns(@Nonnull final Collection<Concern> concerns) {
+		defaultConcernRegistry.registerConcerns(concerns);
+	}
+
+	/**
+	 * Registers the given concerns as defaults for their respective classes.
+	 * @param concerns The concerns to register as defaults.
+	 */
 	public static void setDefaultConcerns(@Nonnull final Stream<Concern> concerns) {
 		defaultConcernRegistry.registerConcerns(concerns);
 	}
@@ -273,6 +281,7 @@ public class Csar {
 	 * <p>
 	 * To wait for the operation to complete, simply call one of the {@link Thread#join()} methods on the returned thread.
 	 * </p>
+	 * @implSpec This implementation delegates to {@link #run(String, Stream, Runnable)}.
 	 * @param concern The concern to be available to the new thread via a new thread group.
 	 * @param runnable The runnable to run in the thread.
 	 * @return The thread executing the given runnable operation in the context of the given concern.
@@ -296,6 +305,7 @@ public class Csar {
 	 * <p>
 	 * To wait for the operation to complete, simply call one of the {@link Thread#join()} methods on the returned thread.
 	 * </p>
+	 * @implSpec This implementation delegates to {@link #run(String, Stream, Runnable)}.
 	 * @param runnable The runnable to run in the thread.
 	 * @param concerns The concerns to be available to the new thread via a new thread group.
 	 * @return The thread executing the given runnable operation in the context of the given concerns.
@@ -319,6 +329,7 @@ public class Csar {
 	 * <p>
 	 * To wait for the operation to complete, simply call one of the {@link Thread#join()} methods on the returned thread.
 	 * </p>
+	 * @implSpec This implementation delegates to {@link #run(String, Stream, Runnable)}.
 	 * @param concerns The concerns to be available to the new thread via a new thread group.
 	 * @param runnable The runnable to run in the thread.
 	 * @return The thread executing the given runnable operation in the context of the given concerns.
@@ -341,6 +352,7 @@ public class Csar {
 	 * <p>
 	 * To wait for the operation to complete, simply call one of the {@link Thread#join()} methods on the returned thread.
 	 * </p>
+	 * @implSpec This implementation delegates to {@link #run(String, Stream, Runnable)}.
 	 * @param threadName The name of the thread to create.
 	 * @param concern The concern to be available to the new thread via a new thread group.
 	 * @param runnable The runnable to run in the thread.
@@ -365,6 +377,7 @@ public class Csar {
 	 * <p>
 	 * To wait for the operation to complete, simply call one of the {@link Thread#join()} methods on the returned thread.
 	 * </p>
+	 * @implSpec This implementation delegates to {@link #run(String, Stream, Runnable)}.
 	 * @param threadName The name of the thread to create.
 	 * @param runnable The runnable to run in the thread.
 	 * @param concerns The concerns to be available to the new thread via a new thread group.
@@ -373,7 +386,7 @@ public class Csar {
 	 * @throws SecurityException If the current thread cannot create a thread in the specified thread group.
 	 * @see ThreadGroup#checkAccess()
 	 * @see ConcernedThreadGroup
-	 * @see #createThread(String, Stream, Runnable)
+	 * @see #createThread(String, Collection, Runnable)
 	 */
 	public static Thread run(@Nonnull final String threadName, @Nonnull final Runnable runnable, @Nonnull final Concern... concerns) {
 		return run(threadName, Stream.of(concerns), runnable);
@@ -403,6 +416,29 @@ public class Csar {
 		final Thread thread = createThread(threadName, concerns, runnable);
 		thread.start();
 		return thread;
+	}
+
+	/**
+	 * Creates a separate thread providing the given concerns via a new concerned thread group. The new thread is not started.
+	 * <p>
+	 * The concerns will be accessible to the new thread using {@link Csar#getConcern(Class)}. If more than one concern provided here has the same type returned
+	 * by {@link Concern#getConcernType()}, the latter concern has priority.
+	 * </p>
+	 * <p>
+	 * To wait for the operation to complete, simply call one of the {@link Thread#join()} methods on the returned thread.
+	 * </p>
+	 * @implSpec This implementation delegates to {@link #createThread(String, Stream, Runnable)}
+	 * @param threadName The name of the thread to create.
+	 * @param concerns The concerns to be available to the new thread via a new thread group.
+	 * @param runnable The runnable to run in the thread.
+	 * @return A thread for executing the given runnable operation in the context of the given concerns.
+	 * @throws NullPointerException if the given thread name, concerns, and/or runnable is <code>null</code>.
+	 * @throws SecurityException If the current thread cannot create a thread in the specified thread group.
+	 * @see ThreadGroup#checkAccess()
+	 * @see ConcernedThreadGroup
+	 */
+	public static Thread createThread(@Nonnull final String threadName, @Nonnull final Collection<Concern> concerns, @Nonnull final Runnable runnable) {
+		return createThread(threadName, concerns.stream(), runnable);
 	}
 
 	/**

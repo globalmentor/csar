@@ -16,7 +16,7 @@
 
 package io.csar;
 
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Stream;
 
 import javax.annotation.Nonnull;
@@ -30,6 +30,7 @@ public interface ConcernRegistry extends Concerned {
 
 	/**
 	 * Registers the given concerns, associating them with their respective concern types.
+	 * @implSpec The default implementation delegates to {@link #registerConcerns(Stream)}.
 	 * @param concerns The concerns to register.
 	 * @see #registerConcern(Concern)
 	 */
@@ -39,6 +40,17 @@ public interface ConcernRegistry extends Concerned {
 
 	/**
 	 * Registers the given concerns, associating them with their respective concern types.
+	 * @implSpec The default implementation delegates to {@link #registerConcerns(Stream)}.
+	 * @param concerns The concerns to register.
+	 * @see #registerConcern(Concern)
+	 */
+	public default void registerConcerns(@Nonnull final Collection<Concern> concerns) {
+		registerConcerns(concerns.stream());
+	}
+
+	/**
+	 * Registers the given concerns, associating them with their respective concern types.
+	 * @implSpec The default implementation calls {@link #registerConcern(Concern)} for each indicated concern.
 	 * @param concerns The concerns to register.
 	 * @see #registerConcern(Concern)
 	 */

@@ -16,7 +16,7 @@
 
 package io.csar;
 
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Stream;
 
 /**
@@ -96,6 +96,11 @@ public class ConcernRegistryThreadGroup extends DecoratedConcernedThreadGroup im
 
 	@Override
 	public void registerConcerns(final Concern... concerns) {
+		getConcerned().registerConcerns(concerns);
+	}
+
+	@Override
+	public void registerConcerns(Collection<Concern> concerns) {
 		getConcerned().registerConcerns(concerns);
 	}
 

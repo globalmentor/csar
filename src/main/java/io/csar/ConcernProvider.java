@@ -20,10 +20,10 @@ import java.util.ServiceLoader;
 import java.util.stream.Stream;
 
 /**
- * A provider of concerns for registration with Csar
+ * A provider of concerns for registration with Csar.
  * <p>
- * When initializing Csar will probe all instances of this class registered as service providers, and register returned {@link #concerns()} in the default Csar
- * {@link ConcernRegistry}.
+ * When initializing Csar will probe all instances of this class registered as service providers, and register concerns returned by {@link #concerns()} in the
+ * default Csar {@link ConcernRegistry}.
  * </p>
  * @author Garret Wilson
  * @see ServiceLoader
