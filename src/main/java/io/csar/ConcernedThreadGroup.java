@@ -42,7 +42,7 @@ public class ConcernedThreadGroup extends ThreadGroup implements Concerned {
 	/**
 	 * Thread group name and and concerns constructor. The current thread's thread group will be used as the parent.
 	 * <p>
-	 * The concerns will be accessible using {@link #getConcern(Class)} using the {@link Concern#getConcernType()} of each concern. If more than one concern has
+	 * The concerns will be accessible using {@link #findConcern(Class)} using the {@link Concern#getConcernType()} of each concern. If more than one concern has
 	 * the same type, the latter concern has priority.
 	 * </p>
 	 * @param name The name of the new thread group.
@@ -58,7 +58,7 @@ public class ConcernedThreadGroup extends ThreadGroup implements Concerned {
 	/**
 	 * Thread group name and and concerns constructor. The current thread's thread group will be used as the parent.
 	 * <p>
-	 * The concerns will be accessible using {@link #getConcern(Class)} using the {@link Concern#getConcernType()} of each concern. If more than one concern has
+	 * The concerns will be accessible using {@link #findConcern(Class)} using the {@link Concern#getConcernType()} of each concern. If more than one concern has
 	 * the same type, the latter concern has priority.
 	 * </p>
 	 * @param name The name of the new thread group.
@@ -74,7 +74,7 @@ public class ConcernedThreadGroup extends ThreadGroup implements Concerned {
 	/**
 	 * Thread group parent, thread group name, and concerns constructor.
 	 * <p>
-	 * The concerns will be accessible using {@link #getConcern(Class)} using the {@link Concern#getConcernType()} of each concern. If more than one concern has
+	 * The concerns will be accessible using {@link #findConcern(Class)} using the {@link Concern#getConcernType()} of each concern. If more than one concern has
 	 * the same type, the latter concern has priority.
 	 * </p>
 	 * @param parent The parent thread group.
@@ -91,7 +91,7 @@ public class ConcernedThreadGroup extends ThreadGroup implements Concerned {
 	/**
 	 * Thread group parent, thread group name, and concerns constructor.
 	 * <p>
-	 * The concerns will be accessible using {@link #getConcern(Class)} using the {@link Concern#getConcernType()} of each concern. If more than one concern has
+	 * The concerns will be accessible using {@link #findConcern(Class)} using the {@link Concern#getConcernType()} of each concern. If more than one concern has
 	 * the same type, the latter concern has priority.
 	 * </p>
 	 * @param parent The parent thread group.
@@ -108,7 +108,7 @@ public class ConcernedThreadGroup extends ThreadGroup implements Concerned {
 
 	@Override
 	@SuppressWarnings("unchecked")
-	public <T extends Concern> Optional<T> getConcern(final Class<T> concernType) {
+	public <T extends Concern> Optional<T> findConcern(final Class<T> concernType) {
 		return (Optional<T>)concerns.getOrDefault(concernType, Optional.empty());
 	}
 

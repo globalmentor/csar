@@ -43,7 +43,7 @@ public class DefaultConcernRegistry implements ConcernRegistry {
 
 	@Override
 	@SuppressWarnings("unchecked")
-	public <T extends Concern> Optional<T> getConcern(final Class<T> concernType) {
+	public <T extends Concern> Optional<T> findConcern(final Class<T> concernType) {
 		return (Optional<T>)concerns.getOrDefault(concernType, Optional.empty());
 	}
 

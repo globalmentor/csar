@@ -34,6 +34,6 @@ public interface Concerned {
 	 * @param concernClass The class of concern to retrieve.
 	 * @return The concern associated with the given class.
 	 */
-	public <T extends Concern> Optional<T> getConcern(@Nonnull final Class<T> concernClass);
+	public <T extends Concern> Optional<T> findConcern(@Nonnull final Class<T> concernClass);
 
 }

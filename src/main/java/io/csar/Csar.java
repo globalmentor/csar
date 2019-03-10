@@ -41,7 +41,7 @@ import javax.annotation.*;
  * {@link Concerned} thread group will be returned. A concern can thus be restricted to specific areas of the program.
  * </p>
  * <p>
- * If no thread group is found that implements the concern type, a global default concern is searched for by using {@link Csar#getDefaultConcern(Class)}. If no
+ * If no thread group is found that implements the concern type, a global default concern is searched for by using {@link Csar#findDefaultConcern(Class)}. If no
  * local or global concern of the requested type is found, a {@link ConcernNotFoundException} is thrown.
  * </p>
  * <p>
@@ -125,8 +125,8 @@ public class Csar {
 	 * @param concernType The class of concern to retrieve.
 	 * @return The concern associated with the given class, or <code>null</code> if there was no concern for that class.
 	 */
-	public static <T extends Concern> Optional<T> getDefaultConcern(@Nonnull final Class<T> concernType) {
-		return defaultConcernRegistry.getConcern(concernType);
+	public static <T extends Concern> Optional<T> findDefaultConcern(@Nonnull final Class<T> concernType) {
+		return defaultConcernRegistry.findConcern(concernType);
 	}
 
 	/**
@@ -143,7 +143,7 @@ public class Csar {
 	 * Retrieves a concern of the given type for the current thread.
 	 * <p>
 	 * A local concern is first searched for using the first {@link Concerned} thread group, if any, of the current thread. If no {@link Concerned} thread group
-	 * is found for the thread, or no such concern is set for the thread group, a default concern is searched for using {@link #getDefaultConcern(Class)}.
+	 * is found for the thread, or no such concern is set for the thread group, a default concern is searched for using {@link #findDefaultConcern(Class)}.
 	 * </p>
 	 * <p>
 	 * If no appropriate concern can be found, a {@link ConcernNotFoundException} is thrown.
@@ -152,12 +152,12 @@ public class Csar {
 	 * @param concernType The class indicating the type of concern to retrieve.
 	 * @return The concern of the requested type.
 	 * @throws ConcernNotFoundException if no concern of the requested type could be found.
-	 * @see Concerned#getConcern(Class)
-	 * @see #getDefaultConcern(Class)
+	 * @see Concerned#findConcern(Class)
+	 * @see #findDefaultConcern(Class)
 	 * @see Thread#currentThread()
 	 */
 	public static <C extends Concern> C getConcern(@Nonnull final Class<C> concernType) throws ConcernNotFoundException {
-		return getOptionalConcern(concernType).orElseThrow(
+		return findConcern(concernType).orElseThrow(
 				() -> new ConcernNotFoundException(format("No local or default concern could be found for concern type %s.", concernType.getSimpleName())));
 	}
 
@@ -165,24 +165,24 @@ public class Csar {
 	 * Retrieves an optional concern of the given type for the current thread.
 	 * <p>
 	 * A local concern is first searched for using the first {@link Concerned} thread group, if any, of the current thread. If no {@link Concerned} thread group
-	 * is found for the thread, or no such concern is set for the thread group, a default concern is searched for using {@link #getDefaultConcern(Class)}.
+	 * is found for the thread, or no such concern is set for the thread group, a default concern is searched for using {@link #findDefaultConcern(Class)}.
 	 * </p>
 	 * @param <C> The type of concern to retrieve.
 	 * @param concernType The class indicating the type of concern to retrieve.
 	 * @return The concern of the requested type.
-	 * @see Concerned#getConcern(Class)
-	 * @see #getDefaultConcern(Class)
+	 * @see Concerned#findConcern(Class)
+	 * @see #findDefaultConcern(Class)
 	 * @see Thread#currentThread()
 	 */
-	public static <C extends Concern> Optional<C> getOptionalConcern(@Nonnull final Class<C> concernType) {
-		return getConcern(Thread.currentThread(), concernType); //retrieve a concern for the current thread
+	public static <C extends Concern> Optional<C> findConcern(@Nonnull final Class<C> concernType) {
+		return findConcern(Thread.currentThread(), concernType); //retrieve a concern for the current thread
 	}
 
 	/**
 	 * Retrieves the concern of the given type for the indicated thread.
 	 * <p>
 	 * A local concern is first searched for using the first {@link Concerned} thread group, if any, of the given thread. If no {@link Concerned} thread group is
-	 * found for the thread, or no such concern is set for the thread group, a default concern is searched for using {@link #getDefaultConcern(Class)}. If no
+	 * found for the thread, or no such concern is set for the thread group, a default concern is searched for using {@link #findDefaultConcern(Class)}. If no
 	 * appropriate concern can be found, a {@link ConcernNotFoundException} is thrown.
 	 * </p>
 	 * @param <T> The type of concern to retrieve.
@@ -190,17 +190,17 @@ public class Csar {
 	 * @param concernType The class indicating the type of concern to retrieve.
 	 * @return The concern of the requested type.
 	 * @throws ConcernNotFoundException if no concern of the requested type could be found.
-	 * @see Concerned#getConcern(Class)
-	 * @see #getDefaultConcern(Class)
+	 * @see Concerned#findConcern(Class)
+	 * @see #findDefaultConcern(Class)
 	 */
-	protected static <T extends Concern> Optional<T> getConcern(@Nonnull final Thread thread, @Nonnull final Class<T> concernType) {
+	protected static <T extends Concern> Optional<T> findConcern(@Nonnull final Thread thread, @Nonnull final Class<T> concernType) {
 		Optional<T> concern = Optional.empty(); //search for a thread-group-local concern
 		final Concerned concernedThreadGroup = getThreadGroup(thread, Concerned.class); //get the concerned thread group
 		if(concernedThreadGroup != null) { //if we found the concerned thread group
-			concern = concernedThreadGroup.getConcern(concernType); //ask the concerned thread group for the concern
+			concern = concernedThreadGroup.findConcern(concernType); //ask the concerned thread group for the concern
 		}
 		if(!concern.isPresent()) { //search for a default concern (can be improved with Optional.or() in Java 9)
-			concern = getDefaultConcern(concernType); //find a default concern
+			concern = findDefaultConcern(concernType); //find a default concern
 		}
 		return concern;
 	}
