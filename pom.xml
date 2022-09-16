@@ -10,7 +10,7 @@
 
 	<groupId>io.csar</groupId>
 	<artifactId>csar</artifactId>
-	<version>0.8.0</version>
+	<version>0.8.1-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
 	<name>Concern Separation Aspect Registrar (Csar)</name>
