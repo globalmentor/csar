@@ -29,7 +29,7 @@ public class ConcernRegistryThreadGroup extends DecoratedConcernedThreadGroup im
 
 	@Override
 	protected ConcernRegistry getConcerned() {
-		return (ConcernRegistry)getConcerned();
+		return (ConcernRegistry)super.getConcerned();
 	}
 
 	/**
