@@ -4,8 +4,9 @@
 
 	<parent>
 		<groupId>com.globalmentor</groupId>
-		<artifactId>globalmentor-base</artifactId>
-		<version>0.7.2</version>
+		<artifactId>globalmentor-root</artifactId>
+		<version>0.8.14</version>
+		<relativePath />
 	</parent>
 
 	<groupId>io.csar</groupId>
