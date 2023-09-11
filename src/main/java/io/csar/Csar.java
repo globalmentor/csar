@@ -202,52 +202,42 @@ public class Csar {
 	 * @see #findDefaultConcern(Class)
 	 */
 	protected static <T extends Concern> Optional<T> findConcern(@Nonnull final Thread thread, @Nonnull final Class<T> concernType) {
-		Optional<T> concern = Optional.empty(); //search for a thread-group-local concern
-		final Concerned concernedThreadGroup = getThreadGroup(thread, Concerned.class); //get the concerned thread group
-		if(concernedThreadGroup != null) { //if we found the concerned thread group
-			concern = concernedThreadGroup.findConcern(concernType); //ask the concerned thread group for the concern
-		}
-		if(!concern.isPresent()) { //search for a default concern (can be improved with Optional.or() in Java 9)
-			concern = findDefaultConcern(concernType); //find a default concern
-		}
-		return concern;
+		return findThreadGroup(thread, Concerned.class) //find the concerned thread group
+				.flatMap(concernedThreadGroup -> concernedThreadGroup.findConcern(concernType)) //if we found the concerned thread group, ask it for the concern
+				.or(() -> findDefaultConcern(concernType)); //otherwise search for a default concern
 	}
 
 	/**
 	 * Walks up the thread group chain of the given thread to find the thread group of the given type.
-	 * <p>
-	 * Necessary duplication of code originally in <code>com.globalmentor.java.Threads</code>.
-	 * </p>
+	 * @apiNote Necessary duplication of code originally in <code>com.globalmentor.java.Threads</code>.
 	 * @param <TG> The type of thread group to find.
 	 * @param thread The thread at which the thread group search should begin.
 	 * @param threadGroupClass The class of the type of thread group to find.
-	 * @return The first thread group of the given type, or <code>null</code> if no thread group of the given type could be found.
+	 * @return The first thread group of the given type, which may be empty if no thread group of the given type could be found.
 	 * @throws NullPointerException if the given thread and/or thread group class is <code>null</code>.
 	 */
-	private static @Nullable <TG> TG getThreadGroup(@Nonnull final Thread thread, @Nonnull final Class<TG> threadGroupClass) {
+	private static @Nullable <TG> Optional<TG> findThreadGroup(@Nonnull final Thread thread, @Nonnull final Class<TG> threadGroupClass) {
 		final ThreadGroup threadGroup = thread.getThreadGroup(); //get the thread's thread group
-		return threadGroup != null ? getThreadGroup(threadGroup, threadGroupClass) : null; //if the thread has a thread group, look for the thread group of the requested type 
+		return threadGroup != null ? findThreadGroup(threadGroup, threadGroupClass) : Optional.empty(); //if the thread has a thread group, look for the thread group of the requested type 
 	}
 
 	/**
 	 * Walks up the thread group chain of the given thread group to find the thread group of the given type or that implements the given interface.
-	 * <p>
-	 * Necessary duplication of code originally in <code>com.globalmentor.java.Threads</code>.
-	 * </p>
+	 * @apiNote Necessary duplication of code originally in <code>com.globalmentor.java.Threads</code>.
 	 * @param <TG> The type of thread group to find.
 	 * @param threadGroup The thread group at which the search should begin.
 	 * @param threadGroupClass The class of the type of thread group to find.
-	 * @return The first thread group of the given type, or <code>null</code> if no thread group of the given type could be found.
+	 * @return The first thread group of the given type, which may be empty if no thread group of the given type could be found.
 	 * @throws NullPointerException if the given thread group and/or thread group class is <code>null</code>.
 	 */
-	private static @Nullable <TG> TG getThreadGroup(@Nonnull ThreadGroup threadGroup, @Nonnull final Class<TG> threadGroupClass) {
+	private static <TG> Optional<TG> findThreadGroup(@Nonnull ThreadGroup threadGroup, @Nonnull final Class<TG> threadGroupClass) {
 		do {
 			if(threadGroupClass.isInstance(threadGroup)) { //if this is the required thread group type
-				return threadGroupClass.cast(threadGroup); //return the thread group as the type
+				return Optional.of(threadGroupClass.cast(threadGroup)); //return the thread group as the type
 			}
 			threadGroup = threadGroup.getParent(); //check this thread group's parent thread group
 		} while(threadGroup != null); //stop looking if we run out of thread groups
-		return null; //we were unable to find the required thread group
+		return Optional.empty(); //we were unable to find the required thread group
 	}
 
 	/** Supplies unique, sequential names for new thread groups. */
