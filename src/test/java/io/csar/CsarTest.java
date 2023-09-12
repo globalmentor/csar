@@ -24,8 +24,6 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import org.junit.jupiter.api.*;
 
-import io.csar.Csar;
-
 /**
  * Tests of {@link Csar}.
  * @author Garret Wilson
