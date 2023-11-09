@@ -131,7 +131,7 @@ public class Csar {
 	 * Returns the default concern for the given concern type.
 	 * @param <T> The type of concern to retrieve.
 	 * @param concernType The class of concern to retrieve.
-	 * @return The concern associated with the given class, or <code>null</code> if there was no concern for that class.
+	 * @return The concern associated with the given class, if any.
 	 */
 	public static <T extends Concern> Optional<T> findDefaultConcern(@Nonnull final Class<T> concernType) {
 		return defaultConcernRegistry.findConcern(concernType);
@@ -141,7 +141,7 @@ public class Csar {
 	 * Unregisters a default concern of the given type. If no concern is associated with the specified type, no action occurs.
 	 * @param <T> The type of concern being removed.
 	 * @param concernType The class with which the concern is associated.
-	 * @return The concern previously associated with the given class, or <code>null</code> if there was no previous concern for that class.
+	 * @return The concern previously associated with the given class, if any
 	 */
 	public static <T extends Concern> Optional<T> unregisterDefaultConcern(@Nonnull final Class<T> concernType) {
 		return defaultConcernRegistry.unregisterConcern(concernType);
